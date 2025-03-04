@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+    <div class=" mx-auto flex flex-col justify-center">
+        <img src="resources/Logo.png" class="w-32 h-auto mx-auto mt-24">
+        <h1 class="text-xl text-center font-bold my-6 block">Регистрирай се в WareLink</h1>   
+        <div class="flex justify-center">
+            <form id="register-form">
+                <div class="flex rounded-2xl border-2 border-gray-500 mx-auto mb-2 overflow-hidden">
+                    <input type="email" id="email" placeholder="Email" 
+                        class="p-2 bg-transparent focus:outline-none focus:ring-0 border-r border-gray-500">
+                    <input type="password" id="password" placeholder="Password" required 
+                        class="p-2 bg-transparent focus:outline-none focus:ring-0">
+                </div>
+
+                    <div class="flex flex-col mx-auto rounded-2xl bg-white border-2 border-gray-500 overflow-hidden">
+                        <input type="text" placeholder="Име на бизнеса" id="business-name" required class="bg-transparent p-2 border-b border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-300">
+                        <input type="text" placeholder="ЕИК" id="eik" required class="bg-transparent p-2 border-b border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-300">
+                        <input type="text" placeholder="ЗДДС номер (не е задължително)" id="zdds" class="bg-transparent p-2 border-b border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-300">
+                        <input type="text" placeholder="МОЛ" id="mol" required class="bg-transparent p-2 border-b border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-300">
+                        <input type="text" placeholder="Адрес" id="address" required class="bg-transparent p-2 focus:outline-none focus:ring-0 focus:border-gray-300">
+                        
+                    </div>
+                    <button type="submit" id="register-btn" class="w-full mx-auto bg-blue-500 text-white p-3 mt-3 rounded-2xl hover:bg-blue-600 transition">Регистрирай се</button>
+                </div>
+
+                
+            </form>
+        </div>
+
+        <p class="text-center mt-4">Вече имате акаунт? 
+            <a href="login.html" class="text-blue-500 hover:underline">Вход</a>
+        </p>
+    </div>
+
+    <script type="module" src="js/register.js"></script>
+</body>
+</html>

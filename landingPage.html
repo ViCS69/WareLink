@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WareLink</title>
+    <link href="src/styles.css" rel="stylesheet">
+    <style>
+      .section { display: none; } 
+      .active { display: block; } 
+      body.noscroll {overflow: hidden;}
+      #close-settings-top:hover {
+      transform: scale(1.2);
+      transition: transform 0.2s ease-in-out;
+}
+  </style>
+</head>
+<body>
+  <header class="w-4/5 mx-auto flex items-center justify-between px-6 py-4 mb-32">
+    <div class="flex items-center justify-center">
+    <img src="resources/WareLinkT.png" alt="WareLinkLogo" class="w-64 h-auto cursor-pointer" onclick="switchSection('home')">
+    <p class="cursor-pointer text-xl mr-3 italic  hover:text-blue-500" onclick="switchSection('pricing')">Цени</p>  
+    </div>
+    <p id="user-email" class="hidden  italic"></p>
+    <div class="flex items-center space-x-3">
+        <a href="login.html" id="login-btn" class="cursor-pointer text-xl italic  hover:text-blue-500">Вход</a>  
+        <a href="register.html" class="w-48 h-auto text-center bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+          Започни от тук
+        </a>        
+        <a href="#" id="logout-link" class="hidden text-xl italic  hover:text-blue-500">Изход</a>
+        <button id="settings-btn" class="text-xl hover:scale-125 hover:text-blue-500 transition-transform duration-200 hidden">⚙️</button>  
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="section active">
+      <div class="w-4/5 mx-auto text-center">
+        <p class="text-xl text-purple-500 font-bold">Прескочи излишните стъпки</p>
+        <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">Улесняване на връзката между<br> бизнес и клиент</h1>
+        <p class="mb-5">Създай магазин и добави клиентите си</p>
+        <div class="mb-20">
+          <button class="w-48 h-auto bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+            Започни от тук
+          </button> 
+          <button class="w-48 h-auto bg-gray-300 hover:bg-white text-purple-500 font-bold py-2 px4 rounded hover:outline-2 outline-black">
+            Запази си час
+          </button>
+          
+        </div>
+
+        <div class="w-4/5 mx-auto mb-10">
+          <img src="resources/StoreDesign.png" alt="app design" class="border-2 border-gray-500 rounded-xl">
+        </div>
+
+      </div>
+    
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="text-center py-10 ">
+        <p class="mb-5 text-2xl">Ценови планове</p>
+        <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">
+            Гъвкави цени спрямо нуждите <br> на потребителя:
+        </h1>
+    </div>
+    <div class="">
+      <div class="w-4/5 mx-auto grid grid-cols-4 md:grid-cols-3 gap-8 ">
+          <div class="bg-gray-900 border border-gray-700 rounded-xl p-8 text-white text-center shadow-lg">
+              <p class="text-lg font-semibold mb-4">Стартов план</p>
+              <p class="text-4xl font-bold">20€ <span class="text-lg ">/месец</span></p>
+              <ul class="mt-4 space-y-2 text-gray-400 text-sm">
+                  <li>✓ Адрес на сайта</li>
+                  <li>✓ До 500 продукта</li>
+                  <li>✓ Базови анализи</li>
+                  <li>-----------------</li>
+              </ul>
+              <button class="mt-6 w-full bg-gradient-to-r from-purple-500 to-purple-700  py-3 rounded-lg">
+                  Започни
+              </button>
+          </div>
+  
+          <div class="bg-gradient-to-r from-cyan-500 to-cyan-300 rounded-xl p-8 text-gray-800 text-center shadow-lg">
+            <p class="text-lg font-semibold mb-4">Базов план</p>
+            <p class="text-4xl text-gray-800 font-bold">40€ <span class="text-lg text-gray-800">/месец</span></p>
+            <ul class="mt-4 space-y-2 text-gray-800 text-sm">
+                <li>✓ Адрес на сайта</li>
+                <li>✓ До 1500 продукта</li>
+                <li>✓ Напреднали Анализи</li>
+                <li>-----------------</li>
+            </ul>
+            <button class="mt-6 w-full bg-white text-cyan-600 py-3 rounded-lg">
+                Започни
+            </button>
+        </div>
+        
+ 
+        <div class="bg-gradient-to-r from-purple-500 to-purple-700 rounded-xl p-8 text-white text-center shadow-lg">
+          <p class="text-lg font-semibold mb-4">Професионален план</p>
+          <p class="text-4xl font-bold">99€ <span class="text-lg text-gray-200">/месец</span></p>
+          <ul class="mt-4 space-y-2 text-gray-100 text-sm">
+              <li>✓ Адрес на сайта</li>
+              <li>✓ Безброй продукти</li>
+              <li>✓ Професионални анализи</li>
+              <li>✓ Поддръжка на пълно работно време</li>
+          </ul>
+          <button class="mt-6 w-full bg-white text-purple-700 py-3 rounded-lg">
+              Започни
+          </button>
+      </div>
+      
+      </div>
+    </div>
+    </section>
+    </main>
+    
+    <script src="js/main.js" defer type="module"></script>
+    <script> 
+    function switchSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+          section.style.display = 'none'; 
+      });
+
+      const activeSection = document.getElementById(sectionId);
+      if (activeSection) {
+          activeSection.classList.add('active');
+          activeSection.style.display = 'block'; 
+      }
+  }
+    console.log("Classes on <html> after load:", document.documentElement.classList);
+    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Shop</title>
+        <link href="/src/styles.css" rel="stylesheet">
+    </head>
+<body id="viewStorePage">
+    <header class="w-4/5 mx-auto bg-white shadow-md py-4">
+        <div class="w-full mx-auto flex items-center justify-between px-6">
+            <div class="flex items-center">
+                <div id="storeLogoContainer" class="relative w-16 h-16 cursor-pointer bg-cover bg-center border-2 border-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
+                    <img id="storeLogo" class="absolute w-full h-full object-cover">
+                </div>
+                <div class="ml-2  flex justify-center items-center">
+                    <h1 id="storeName" class="text-2xl font-semibold text-gray-800"></h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+    
+                <div class="relative cursor-pointer group">
+                    <img src="Resources/ShoppingCart.svg" alt="Cart" class="w-10">
+                    <div class="absolute right-0 mt-2 w-64 bg-gray-800 text-white p-4 rounded shadow-lg hidden group-hover:block z-50">
+                        <p id="cartMessage">Shopping cart is empty</p>
+                        <ul id="cartItems"></ul>
+                    </div>
+                </div>
+    
+                <div class="relative group">
+                    <button class="bg-gray-800 text-white px-4 py-2 rounded">Menu</button>
+                    <div id="category-menu" class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div id="categories-list"></div>                        
+                    </div>
+                </div> 
+            </div> 
+        </div> 
+    </header>
+    
+    
+    <main class="w-4/5 container mx-auto px-6">
+        <article class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6" id="itemsContainer"></article>
+    </main>
+
+    <script type="module" src="js/viewstore.js"></script>
+</body>
+</html>

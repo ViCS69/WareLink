@@ -1,6 +1,6 @@
 module.exports = {
     darkMode: 'class',
-    content: ["./landingPage.html","./loggedIn.html","store.html","viewstore.html","./src/js.{js,jsx,ts,tsx,vue,html}", "./src/**/*.{js,ts,jsx,tsx}", "./resources/**/*.{js,ts,jsx,tsx}"],
+    content: ["./index.html","./loggedIn.html","store.html","viewstore.html","./src/js.{js,jsx,ts,tsx,vue,html}", "./src/**/*.{js,ts,jsx,tsx}", "./resources/**/*.{js,ts,jsx,tsx}"],
     safelist:[
       'bg-black', 'bg-green-500',
     ],

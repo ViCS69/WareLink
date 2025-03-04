@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            window.location.href = "landingPage.html";
+            window.location.href = "index.html";
             return;
         }
 
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     logoutLink.addEventListener("click", () => {
         logout();
-        window.location.href = "landingPage.html";
+        window.location.href = "index.html";
     });
 
     document.querySelectorAll("button[data-plan]").forEach(button => {

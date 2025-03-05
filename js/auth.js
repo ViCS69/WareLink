@@ -14,10 +14,8 @@ async function logout() {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         localStorage.setItem("userUID", user.uid);
-        console.log("User authenticated:", user.uid);
     } else {
         localStorage.removeItem("userUID");
-        console.log("User signed out");
     }
 });
 

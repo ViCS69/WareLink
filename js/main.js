@@ -7,12 +7,10 @@ window.logout = logout;
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        console.log("🎯 User detected:", user.email);
         window.location.href = "loggedIn.html"; 
     }
 });
 
 function viewStore(storeId) {
-    console.log("🔍 Redirecting to store:", storeId);
     window.location.href = `store.html?id=${storeId}`;
 }

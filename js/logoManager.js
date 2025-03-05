@@ -44,7 +44,6 @@ async function loadStoreName() {
 }
 
 async function handleLogoUpload(event) {
-    console.log("🔍 handleLogoUpload triggered");
 
     const file = event.target.files[0];
     if (!file) {
@@ -59,7 +58,6 @@ async function handleLogoUpload(event) {
             alert("Не сте влезли в системата!");
             return;
         }
-        console.log("✅ User is logged in:", user.uid);
 
         const storeQuery = query(collection(db, "stores"), where("ownerId", "==", user.uid));
         const storeSnapshot = await getDocs(storeQuery);
@@ -70,38 +68,30 @@ async function handleLogoUpload(event) {
         }
 
         const storeId = storeSnapshot.docs[0].id;
-        console.log("✅ Found store ID:", storeId);
 
         const compressedFile=await compressImage(file);
 
         const fileName = `logo_${Date.now()}_${file.name}`;
         const storageRef = ref(storage, `stores/${storeId}/logo/${fileName}`);
 
-        console.log("📤 Uploading file...");
         const uploadTask = uploadBytesResumable(storageRef, compressedFile);
 
         uploadTask.on(
             "state_changed",
             (snapshot) => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log(`⬆️ Upload progress: ${progress.toFixed(2)}%`);
             },
             (error) => {
                 console.error("❌ Грешка при качване:", error);
                 alert(`Грешка при качване: ${error.message}`);
             },
             async () => {
-                console.log("✅ Upload completed!");
-
                 const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                console.log("🌐 Download URL:", downloadUrl);
 
                 const storeRef = doc(db, "stores", storeId);
-                console.log("📝 Updating Firestore...");
                 await updateDoc(storeRef, { logoUrl: downloadUrl });
 
                 document.getElementById("storeLogo").src = `${downloadUrl}&t=${Date.now()}`;
-                console.log("✅ UI Updated!");
             }
         );
     } catch (error) {
@@ -111,7 +101,6 @@ async function handleLogoUpload(event) {
 }
 
 async function compressImage(file, maxSize = 128, targetSizeKB = 50) {
-    console.log(`⚡ Compressing Image to max ${maxSize}px...`);
 
     let quality = 0.8; 
     let compressedFile;
@@ -126,7 +115,6 @@ async function compressImage(file, maxSize = 128, targetSizeKB = 50) {
         do {
             options.initialQuality = quality; 
             compressedFile = await imageCompression(file, options);
-            console.log(`🔍 Compressed Size: ${(compressedFile.size / 1024).toFixed(2)} KB at Quality ${quality * 100}%`);
 
             if (compressedFile.size <= targetSizeKB * 1024) break;
 

@@ -61,7 +61,6 @@ async function getNextProductPosition(storeId) {
 }
 
 async function getStoreId(userUID) {
-    console.log("Getting store ID for user:", userUID);
     
     const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userUID));
     const storeSnapshot = await getDocs(storeQuery);
@@ -116,7 +115,6 @@ async function deleteProduct(productId) {
         }
         
         await deleteDoc(productRef);
-        console.log("Product deleted successfully:", productId);
     } catch (error) {
         console.error("Error deleting product:", error);
     }
@@ -184,11 +182,6 @@ function initializeEventListeners() {
         const selectedCategory = categorySelectDropdown.value;
         const productId = categoryModal.dataset.productId;
     
-        console.log("🚀 Category Change Debug:");
-        console.log("Selected Category:", selectedCategory);
-        console.log("Product ID:", productId);
-        console.log("Modal Dataset:", categoryModal.dataset);
-    
         if (!selectedCategory || !productId) {
             console.error("❌ No category selected or product ID missing.");
             alert("Моля, изберете категория.");
@@ -197,7 +190,6 @@ function initializeEventListeners() {
     
         try {
             await changeProductCategory(productId, selectedCategory);
-            console.log("✅ Category changed successfully!");
     
             // Close the modal
             categoryModal.classList.add("hidden");

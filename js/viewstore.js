@@ -6,8 +6,6 @@ import { loadProducts } from "./productManager.js";
 const params = new URLSearchParams(window.location.search);
 const storeId = params.get("id");
 
-console.log("📌 Store ID from URL:", storeId);
-
 async function loadStore() {
     const storeNameElement = document.getElementById("storeName");
     const storeLogoElement = document.getElementById("storeLogo");
@@ -25,7 +23,6 @@ async function loadStore() {
             const storeData = storeSnap.data();
             storeNameElement.innerText = storeData.storeName;
             storeLogoElement.src = storeData.logoUrl || "default-logo.png";
-            console.log("✅ Store data loaded:", storeData);
         } else {
             storeNameElement.innerText = "❌ Store not found!";
         }

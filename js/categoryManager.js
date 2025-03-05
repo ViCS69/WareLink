@@ -3,8 +3,6 @@ import { collection, addDoc, query, where, getDoc, getDocs, deleteDoc, doc, upda
 import { loadProducts } from "./productManager.js";
 
 async function getStoreId(userUID) {
-    console.log("Getting store ID for user:", userUID);
-
     const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userUID));
     const storeSnapshot = await getDocs(storeQuery);
 
@@ -98,7 +96,6 @@ async function populateCategoryDropdown() {
 
 async function addCategory(categoryName) {
     try {
-        console.log("⏳ Adding category:", categoryName); 
         const userUID = localStorage.getItem("userUID");
         if (!userUID) {
             throw new Error("Не сте влезли в системата!");
@@ -123,8 +120,6 @@ async function addCategory(categoryName) {
             storeId: storeId,
             createdAt: new Date()
         });
-
-        console.log("✅ Category successfully added to Firestore!"); 
 
         await loadCategories(storeId);
     } catch (error) {
@@ -163,13 +158,10 @@ async function deleteCategory(categoryName, storeId) {
 }
 
 async function loadCategories(storeId = null) {
-    console.log("loadCategories called with storeId:", storeId);
     let queryStoreId = storeId;
 
     const isStorePage = document.getElementById("storePage") !== null;
     const isViewStorePage = document.getElementById("viewStorePage") !== null;
-
-    console.log("isStorePage:", isStorePage, "isViewStorePage:", isViewStorePage);
 
     if (!storeId && isStorePage) {
         const userUID = localStorage.getItem("userUID");
@@ -220,7 +212,6 @@ async function loadCategories(storeId = null) {
         if (categorySnapshot.empty) {
             if (isStorePage && categorySelect) {
                 categorySelect.innerHTML = `<option disabled selected>No categories found</option>`;
-                console.log("No categories found message added.");
             }
             return;
         }

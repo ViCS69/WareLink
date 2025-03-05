@@ -18,15 +18,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-enableIndexedDbPersistence(db)
-    .catch((err) => {
-        if (err.code == 'failed-precondition') {
-            console.log('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-        } else if (err.code == 'unimplemented') {
-            console.log('The current browser does not support persistence.');
-        }
-    });
-
 window.addEventListener('unhandledrejection', (event) => {
     if (event.reason?.code === 'ERR_BLOCKED_BY_CLIENT' || 
         event.reason?.message?.includes('ERR_BLOCKED_BY_CLIENT') ||

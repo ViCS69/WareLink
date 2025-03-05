@@ -13,7 +13,6 @@ window.addEventListener("unhandledrejection", (event) => {
 
 auth.onAuthStateChanged(async (user) => {
     if (user) {
-        console.log("✅ User authenticated:", user.uid);
         localStorage.setItem("userUID", user.uid);
         try {
             await loadStoreName();
@@ -23,14 +22,11 @@ auth.onAuthStateChanged(async (user) => {
             console.error("❌ Error loading data after auth:", error);
         }
     } else {
-        console.log("❌ User signed out");
         localStorage.removeItem("userUID");
     }
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-    console.log("✅ DOM loaded, initializing...");
-
     initializeEventListeners();
     loadStoreLogo();
 
@@ -45,9 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-function initializeEventListeners() {
-    console.log("✅ Initializing event listeners...");
-    
+function initializeEventListeners() { 
     document.getElementById("logoUploader")?.addEventListener("change", handleLogoUpload);
     document.getElementById("addItemBtn")?.addEventListener("click", () => {
         document.getElementById("uploadModal")?.classList.remove("hidden");
@@ -73,7 +67,6 @@ function initializeEventListeners() {
         if (categoryName) {
             try {
                 await addCategory(categoryName);
-                console.log("✅ Category added successfully!");
                 this.reset();
                 document.getElementById("addCategoryModal").classList.add("hidden");
             } catch (error) {
@@ -91,10 +84,6 @@ function initializeEventListeners() {
         const categoryModal = document.getElementById("categoryModal");
         const productId = categoryModal.dataset.productId;
     
-        console.log("🚀 Attempting to change category...");
-        console.log("Selected Category:", selectedCategory);
-        console.log("Product ID:", productId);
-    
         if (!selectedCategory || !productId) {
             console.error("❌ No category selected or product ID missing.");
             alert("Моля, изберете категория.");
@@ -103,12 +92,9 @@ function initializeEventListeners() {
     
         try {
             await changeProductCategory(productId, selectedCategory);
-            console.log("✅ Category changed successfully!");
     
-            // Close the modal after updating
             categoryModal.classList.add("hidden");
     
-            // Reload products to reflect the change
             await loadProducts();
         } catch (error) {
             console.error("❌ Error changing category:", error);
@@ -154,7 +140,6 @@ function initializeEventListeners() {
         }
     });
 
-    // 🔽 Fix dropdown menu toggle issue 🔽
     document.addEventListener("click", (event) => {
         const openDropdown = document.querySelector(".dropdown-menu:not(.hidden)");
         const isThreeDotsButton = event.target.closest(".fas, .three-dots-icon");

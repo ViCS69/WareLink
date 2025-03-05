@@ -100,21 +100,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function updateSubscriptionUI(userId) {
-        console.log("Fetching user data for:", userId);
-        
         const userRef = doc(db, "users", userId);
         const userSnap = await getDoc(userRef);
     
         if (!userSnap.exists()) {
-            console.log("User not found!");
             return;
         }
     
         const userData = userSnap.data();
-        console.log("User Data:", userData);
     
         const currentPlan = userData.subscription;
-        console.log("Current Plan:", currentPlan);
     
         document.querySelectorAll(".subscription-btn").forEach(button => {
             const plan = button.getAttribute("data-plan");

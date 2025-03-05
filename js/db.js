@@ -19,8 +19,6 @@ async function createUserStore(user) {
             storeName: `${user.displayName}'s Store`,
             createdAt: new Date()
         });
-    } else {
-        console.log("User already exists in Firestore.");
     }
 }
 

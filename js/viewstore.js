@@ -1,7 +1,8 @@
 import { db } from "./firebaseConfig.js";
-import { doc, getDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 import { loadCategories } from "./categoryManager.js";
 import { loadProducts } from "./productManager.js";
+import { setCurrentStore, checkout } from "./cartManager.js"; // Import checkout
 
 const params = new URLSearchParams(window.location.search);
 const storeId = params.get("id");
@@ -22,7 +23,7 @@ async function loadStore() {
         if (storeSnap.exists()) {
             const storeData = storeSnap.data();
             storeNameElement.innerText = storeData.storeName;
-            storeLogoElement.src = storeData.logoUrl || "default-logo.png";
+            storeLogoElement.src = storeData.logoUrl || "./resources/default.svg";
         } else {
             storeNameElement.innerText = "❌ Store not found!";
         }
@@ -33,7 +34,13 @@ async function loadStore() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    if (storeId) {
+        setCurrentStore(storeId); 
+    }
+
     await loadStore();
     await loadCategories(storeId);
-    await loadProducts(null, storeId); 
+    await loadProducts(null, storeId);
 });
+
+window.checkout = checkout;

@@ -22,7 +22,8 @@ async function createStore(storeName) {
     await setDoc(storeRef, {
         ownerId: auth.currentUser.uid,
         storeName: storeName,
-        productLimit: userData.productLimit
+        productLimit: userData.productLimit,
+        logoUrl: "./resources/default.svg"
     });
 
     alert("✅ Магазинът е успешно създаден!");

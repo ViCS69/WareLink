@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Received Orders</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
+    <div class="w-4/5 max-w-3xl bg-white p-6 shadow-lg rounded-lg">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Received Orders</h1>
+        <div id="orders-container" class="space-y-6">
+            <!-- Orders will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from "./js/firebaseConfig.js";
+        import { collection, query, where, getDocs, doc, getDoc, deleteDoc, setDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+        async function loadReceivedOrders() {
+    const userId = localStorage.getItem("userUID");
+    if (!userId) return;
+
+    const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userId));
+    const storeSnapshot = await getDocs(storeQuery);
+    if (storeSnapshot.empty) return;
+
+    const storeId = storeSnapshot.docs[0].id;
+    const ordersQuery = query(collection(db, "orders"), where("storeId", "==", storeId), orderBy("timestamp", "desc"));
+    const ordersSnapshot = await getDocs(ordersQuery);
+
+    const ordersContainer = document.getElementById("orders-container");
+    ordersContainer.innerHTML = "";
+
+    if (ordersSnapshot.empty) {
+        ordersContainer.innerHTML = "<p class='text-gray-500'>No received orders yet.</p>";
+        return;
+    }
+
+    for (const orderDoc of ordersSnapshot.docs) {
+        const order = orderDoc.data();
+        const customerRef = doc(db, "users", order.userId);
+        const customerSnap = await getDoc(customerRef);
+        const customer = customerSnap.exists() ? customerSnap.data() : { email: "Unknown", businessName: "N/A" };
+
+        const orderElement = document.createElement("div");
+        orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+
+        orderElement.innerHTML = `
+            <p class="text-sm text-gray-600"><strong>Customer:</strong> ${customer.businessName} (${customer.email})</p>
+            <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${orderDoc.id}</p>
+            <p class="text-sm text-gray-600"><strong>Total:</strong> ${order.total.toFixed(2)}лв.</p>
+            <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
+            <p class="text-sm text-gray-600"><strong>Status:</strong> ${order.status || "Pending"}</p>
+            <ul class="mt-2 list-disc list-inside">
+                ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
+            </ul>
+            <button class="complete-order-btn bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-600" data-order-id="${orderDoc.id}">
+                Complete Order
+            </button>
+        `;
+
+        ordersContainer.appendChild(orderElement);
+    }
+
+    document.querySelectorAll(".complete-order-btn").forEach(button => {
+        button.addEventListener("click", async (event) => {
+            const orderId = event.target.dataset.orderId;
+            await completeOrder(orderId);
+        });
+    });
+}
+
+async function completeOrder(orderId) {
+    const orderRef = doc(db, "orders", orderId);
+    const orderSnap = await getDoc(orderRef);
+    if (!orderSnap.exists()) return;
+
+    const orderData = orderSnap.data();
+    const orderHistoryRef = doc(db, "orderHistory", orderId);
+
+    await setDoc(orderHistoryRef, orderData);
+    await deleteDoc(orderRef);
+
+    loadReceivedOrders();
+}
+
+document.addEventListener("DOMContentLoaded", loadReceivedOrders);
+    </script>
+</body>
+</html>

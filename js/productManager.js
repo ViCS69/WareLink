@@ -3,6 +3,7 @@ import { collection, doc, addDoc, query, where, getDocs, deleteDoc, getDoc, upda
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
 import { compressImage } from "./logoManager.js";
 import { changeProductCategory, getCategoriesForStore, populateCategoryDropdown } from "./categoryManager.js";
+import { addToCart } from "./cartManager.js";
 
 async function addProduct(name, price) {
     const userUID = localStorage.getItem("userUID");
@@ -171,43 +172,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function initializeEventListeners() {
-    document.getElementById("closeCategoryModal").addEventListener("click", () => {
-        document.getElementById("categoryModal").classList.add("hidden");
-    });
-    document.getElementById("saveCategoryBtn").addEventListener("click", async (event) => {
-        event.preventDefault();
-    
-        const categoryModal = document.getElementById("categoryModal");
-        const categorySelectDropdown = document.getElementById("categorySelectDropdown");
-        const selectedCategory = categorySelectDropdown.value;
-        const productId = categoryModal.dataset.productId;
-    
-        if (!selectedCategory || !productId) {
-            console.error("❌ No category selected or product ID missing.");
-            alert("Моля, изберете категория.");
-            return;
-        }
-    
-        try {
-            await changeProductCategory(productId, selectedCategory);
-    
-            // Close the modal
-            categoryModal.classList.add("hidden");
-    
-            // Reload products to reflect the change
-            await loadProducts();
-    
-            alert(`Категорията е променена на "${selectedCategory}"`);
-        } catch (error) {
-            console.error("❌ Error changing category:", error);
-            alert("Грешка при промяна на категорията.");
-        }
-    });
+    const closeCategoryModal = document.getElementById("closeCategoryModal");
+    const saveCategoryBtn = document.getElementById("saveCategoryBtn");
+    const stopMovingModeBtn = document.getElementById("stopMovingModeBtn");
 
-    document.getElementById("stopMovingModeBtn").addEventListener("click", () => {
-        toggleMovingMode(false);
-    });
+    if (closeCategoryModal) {
+        closeCategoryModal.addEventListener("click", () => {
+            document.getElementById("categoryModal").classList.add("hidden");
+        });
+    }
+
+    if (saveCategoryBtn) {
+        saveCategoryBtn.addEventListener("click", async (event) => {
+            event.preventDefault();
+
+            const categoryModal = document.getElementById("categoryModal");
+            const categorySelectDropdown = document.getElementById("categorySelectDropdown");
+            const selectedCategory = categorySelectDropdown?.value;
+            const productId = categoryModal?.dataset?.productId;
+
+            if (!selectedCategory || !productId) {
+                console.error("❌ No category selected or product ID missing.");
+                alert("Моля, изберете категория.");
+                return;
+            }
+
+            try {
+                await changeProductCategory(productId, selectedCategory);
+
+                categoryModal.classList.add("hidden");
+
+                await loadProducts();
+
+                alert(`Категорията е променена на "${selectedCategory}"`);
+            } catch (error) {
+                console.error("❌ Error changing category:", error);
+                alert("Грешка при промяна на категорията.");
+            }
+        });
+    }
+
+    if (stopMovingModeBtn) {
+        stopMovingModeBtn.addEventListener("click", () => {
+            toggleMovingMode(false);
+        });
+    }
 }
+
 
 function displayProduct(product) {
     const itemsContainer = document.getElementById("itemsContainer");
@@ -235,17 +246,14 @@ function displayProduct(product) {
         const settingsMenu = document.createElement("div");
         settingsMenu.classList.add("relative");
 
-        // Three dots icon (menu button)
         const threeDotsIcon = document.createElement("button");
         threeDotsIcon.classList.add("three-dots-icon", "absolute", "top-2", "right-2", "text-gray-500", "hover:text-gray-700", "p-2");
         threeDotsIcon.innerHTML = "<i class='fas fa-ellipsis-v'></i>";
 
-        // Dropdown menu
         const dropdownMenu = document.createElement("div");
         dropdownMenu.classList.add("dropdown-menu", "absolute", "right-0", "mt-2", "w-48", "bg-white", "border", "rounded", "shadow-lg", "transition-opacity", "duration-300");
-        dropdownMenu.style.display = "none"; // Start hidden instead of using classes
+        dropdownMenu.style.display = "none"; 
 
-        // Dropdown options
         const deleteOption = document.createElement("a");
         deleteOption.href = "#";
         deleteOption.classList.add("block", "px-4", "py-2", "text-gray-800", "hover:bg-gray-200");
@@ -269,40 +277,33 @@ function displayProduct(product) {
         settingsMenu.appendChild(dropdownMenu);
         itemDiv.appendChild(settingsMenu);
 
-        // ✅ Function to toggle dropdown visibility
         function toggleDropdown() {
             const isVisible = dropdownMenu.style.display === "block";
             
-            // Hide all other dropdowns first
             document.querySelectorAll(".dropdown-menu").forEach(menu => {
                 menu.style.display = "none";
             });
 
-            // Toggle visibility
             dropdownMenu.style.display = isVisible ? "none" : "block";
         }
 
-        // ✅ Ensure dropdown opens & closes correctly
         threeDotsIcon.addEventListener("click", (event) => {
             event.stopPropagation();
             toggleDropdown();
         });
 
-        // ✅ Hide menu when clicking outside
         document.addEventListener("click", (event) => {
             if (!settingsMenu.contains(event.target)) {
                 dropdownMenu.style.display = "none";
             }
         });
 
-        // Delete product logic
         deleteOption.addEventListener("click", async (event) => {
             event.preventDefault();
             await deleteProduct(product.id);
             itemDiv.remove();
         });
 
-        // Change category logic
         changeCategoryOption.addEventListener("click", async (event) => {
             event.preventDefault();
         
@@ -334,7 +335,10 @@ function displayProduct(product) {
         addToCart(product);
     });
 
+    itemDiv.appendChild(imageContainer);
+    itemDiv.appendChild(text);
     itemDiv.appendChild(addToCartBtn);
+    itemsContainer.appendChild(itemDiv);
 }
 
 
@@ -391,7 +395,6 @@ async function moveProduct(draggedProductId, targetProductId) {
         const nextSibling = targetProduct.nextElementSibling;
         itemsContainer.insertBefore(draggedProduct, nextSibling);
 
-        // Update the product IDs in the database
         debouncedUpdateProductPositions();
     }
 }
@@ -431,7 +434,6 @@ function toggleMovingMode(isEnabled, button) {
         body.classList.add("bg-light-blue");
         stopMovingModeButton.classList.remove("hidden");
 
-        // Add drag and drop listeners
         document.querySelectorAll(".product-item").forEach(addDragAndDropListeners);
     } else {
         itemsContainer.classList.remove("moving-mode");
@@ -441,13 +443,8 @@ function toggleMovingMode(isEnabled, button) {
         body.classList.remove("bg-light-blue");
         stopMovingModeButton.classList.add("hidden");
 
-        // Remove drag and drop listeners
         document.querySelectorAll(".product-item").forEach(removeDragAndDropListeners);
     }
-}
-
-function addToCart(product) {
-    alert(`Added ${product.name} to cart!`);
 }
 
 export {

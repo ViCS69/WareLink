@@ -40,12 +40,19 @@
             <div class="flex items-center gap-4">
                 <button id="addItemBtn" class="add-item-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">+ Add Item</button>
     
-                <div class="relative cursor-pointer">
-                    <img src="Resources/ShoppingCart.svg" alt="Cart" class="w-10">
-                    <div class="absolute right-0 mt-2 w-64 bg-gray-800 text-white p-4 rounded shadow-lg hidden group-hover:block z-50">
-                        <p id="cartMessage">Shopping cart is empty</p>
-                        <ul id="cartItems"></ul>
-                    </div>
+                <div id="store-actions">
+                    <button id="received-orders-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
+                        View Received Orders
+                    </button>
+                    <button id="order-history-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
+                        Order History
+                    </button>
+                </div>
+
+                <div id="store-actions">
+                    <button id="received-orders-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
+                        View Received Orders
+                    </button>
                 </div>
     
                 <div class="relative group">
@@ -59,9 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="justify-left">
-        <a class="w-48 h-12 text-center  bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Back</a>
-        </div>
+        
     </div>
     </header>
     
@@ -139,6 +144,64 @@
 
     <script type="module" src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.17/browser-image-compression.js"></script><!--Библиотека за компресиране на снимките-->
-    
+    <script type="module">
+        import { db } from "./js/firebaseConfig.js";
+import { collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+async function ensureStoreIdInURL() {
+    const userId = localStorage.getItem("userUID");
+    const urlParams = new URLSearchParams(window.location.search);
+    let storeId = urlParams.get("id");
+
+    if (!userId) {
+        console.warn("❌ No user ID found! Make sure the user is logged in.");
+        return;
+    }
+
+    if (!storeId) {
+        const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userId));
+        const storeSnapshot = await getDocs(storeQuery);
+
+        if (!storeSnapshot.empty) {
+            storeId = storeSnapshot.docs[0].id;
+
+            window.history.replaceState(null, "", `?id=${storeId}`);
+        } else {
+            console.warn("❌ No store found for this user!");
+            return;
+        }
+    }
+
+    checkStoreOwnership(storeId);
+}
+
+async function checkStoreOwnership(storeId) {
+    const userId = localStorage.getItem("userUID");
+    if (!userId || !storeId) return;
+
+    const storeRef = doc(db, "stores", storeId);
+    const storeSnap = await getDoc(storeRef);
+
+    if (storeSnap.exists() && storeSnap.data().ownerId === userId) {
+        const ordersButton = document.getElementById("received-orders-btn");
+        const historyButton = document.getElementById("order-history-btn");
+
+        ordersButton.classList.remove("hidden");
+        historyButton.classList.remove("hidden");
+
+        ordersButton.addEventListener("click", () => {
+            window.location.href = `receivedOrders.html?storeId=${storeId}`;
+        });
+
+        historyButton.addEventListener("click", () => {
+            window.location.href = `orderHistory.html?storeId=${storeId}`;
+        });
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", ensureStoreIdInURL);
+
+    </script>
 </body>
 </html>

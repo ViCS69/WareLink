@@ -20,13 +20,19 @@
 
             <div class="flex items-center gap-4">
     
-                <div class="relative cursor-pointer group">
-                    <img src="Resources/ShoppingCart.svg" alt="Cart" class="w-10">
-                    <div class="absolute right-0 mt-2 w-64 bg-gray-800 text-white p-4 rounded shadow-lg hidden group-hover:block z-50">
-                        <p id="cartMessage">Shopping cart is empty</p>
-                        <ul id="cartItems"></ul>
+                <div class="cart-wrapper relative group z-50">
+                    <button class="bg-blue-500 text-white py-2 px-4 rounded">Cart</button>
+                    <div class="cart-container absolute top-full right-0 w-80 p-4 shadow-lg bg-white mt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                        <h2 class="text-xl font-bold">Shopping Cart</h2>
+                        <div id="cart-items" class="max-h-64 overflow-y-auto mt-2"></div>
+                        <div class="flex justify-between font-bold text-lg mt-2">
+                            <span>Total:</span>
+                            <span id="cart-total">$0.00</span>
+                        </div>
+                        <button class="mt-2 w-full bg-blue-500 text-white py-2 rounded" onclick="checkout()">Checkout</button>
                     </div>
                 </div>
+                
     
                 <div class="relative group">
                     <button class="bg-gray-800 text-white px-4 py-2 rounded">Menu</button>
@@ -44,5 +50,6 @@
     </main>
 
     <script type="module" src="js/viewstore.js"></script>
+    <script type="module" src="js/cartManager.js"></script>
 </body>
 </html>

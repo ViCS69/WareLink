@@ -2,7 +2,7 @@ import { db } from "./firebaseConfig.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 import { loadCategories } from "./categoryManager.js";
 import { loadProducts } from "./productManager.js";
-import { setCurrentStore, checkout } from "./cartManager.js"; // Import checkout
+import { setCurrentStore, checkout } from "./cartManager.js";
 
 const params = new URLSearchParams(window.location.search);
 const storeId = params.get("id");

@@ -4,13 +4,13 @@ import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.co
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3BhVOReju5IQ6_R2GAy36CdkEJ6zaOI0",
-  authDomain: "astral-bit-450012-k3.firebaseapp.com",
-  projectId: "astral-bit-450012-k3",
-  storageBucket: "astral-bit-450012-k3.firebasestorage.app",
-  messagingSenderId: "151996753339",
-  appId: "1:151996753339:web:744d171568d9064cf1109e",
-  measurementId: "G-GYVTKL9SN8"
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);

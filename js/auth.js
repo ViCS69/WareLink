@@ -23,7 +23,7 @@ async function registerUser(user) {
     const userRef = doc(db, "users", user.uid);
     await setDoc(userRef, {
         email: user.email,
-        subscription: null, // No plan at first
+        subscription: null, 
         productLimit: 0
     });
 }

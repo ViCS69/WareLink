@@ -95,7 +95,6 @@ async function checkout() {
     }
 
     try {
-        // ✅ Create an order object
         const order = {
             storeId: storeId,
             userId: localStorage.getItem("userUID") || "guest",
@@ -103,19 +102,15 @@ async function checkout() {
             total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
             timestamp: serverTimestamp(),
         };
-
-        // ✅ Save the order to Firestore
         await addDoc(collection(db, "orders"), order);
 
         alert("✅ Checkout successful! Your order has been placed.");
 
-        // ✅ FULLY CLEAR THE CART
-        localStorage.removeItem(cartKey); // Remove from local storage
-        cartItems = []; // Clear in-memory array
-        document.getElementById("cart-items").innerHTML = ""; // Clear UI
-        document.getElementById("cart-total").textContent = "0.00лв."; // Reset total price
-
-        // ✅ Redirect to orders page
+        localStorage.removeItem(cartKey); 
+        cartItems = []; 
+        document.getElementById("cart-items").innerHTML = ""; 
+        document.getElementById("cart-total").textContent = "0.00лв."; 
+        
         window.location.href = "orders.html";
     } catch (error) {
         console.error("❌ Error processing checkout:", error);

@@ -27,11 +27,9 @@ async function addProduct(name, price) {
             createdAt: new Date()
         };
 
-        // Get the next product ID
         const productId = await getNextProductId(storeId);
         productData.productId = productId;
 
-        // Set initial position to be the last one
         productData.position = await getNextProductPosition(storeId);
 
         await addDoc(collection(db, "products"), productData);
@@ -340,9 +338,6 @@ function displayProduct(product) {
     itemDiv.appendChild(addToCartBtn);
     itemsContainer.appendChild(itemDiv);
 }
-
-
-
 
 function addDragAndDropListeners(itemDiv) {
     itemDiv.setAttribute('draggable', true);

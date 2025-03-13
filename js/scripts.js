@@ -150,7 +150,6 @@ function initializeEventListeners() {
         }
     });
 
-    // Ensure dropdown menu click doesn’t close immediately
     document.querySelectorAll(".dropdown-menu").forEach(menu => {
         menu.addEventListener("click", (event) => {
             event.stopPropagation();

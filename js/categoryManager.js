@@ -67,7 +67,7 @@ async function getCategoriesForStore(storeId) {
 
 async function populateCategoryDropdown() {
     const categorySelectDropdown = document.getElementById("categorySelectDropdown");
-    categorySelectDropdown.innerHTML = "<option disabled selected>Изберете категория</option>"; // Clear old categories
+    categorySelectDropdown.innerHTML = "<option disabled selected>Изберете категория</option>"; 
 
     const userUID = localStorage.getItem("userUID");
     if (!userUID) {

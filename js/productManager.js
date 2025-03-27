@@ -4,6 +4,7 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https:/
 import { compressImage } from "./logoManager.js";
 import { changeProductCategory, getCategoriesForStore, populateCategoryDropdown } from "./categoryManager.js";
 import { addToCart } from "./cartManager.js";
+import { serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
 async function addProduct(name, price) {
     const userUID = localStorage.getItem("userUID");
@@ -18,17 +19,20 @@ async function addProduct(name, price) {
         const storeId = await getStoreId(userUID);
         const imageUrl = await uploadProductImage(storeId, productImage);
         
+        const cleanedName = cleanProductName(name);
+        const unit = parseUnitFromName(name);
         const productData = {
             storeId,
             category,
             name: name.trim(),
-            price: parseFloat(price),
+            nameCleaned: cleanedName,
+            quantity: 0,
+            price: cleanPriceInput(price),
             imageUrl,
-            createdAt: new Date()
+            unitType: unit?.unitType || null,
+            unitValue: unit?.unitValue || null,
+            createdAt: serverTimestamp()
         };
-
-        const productId = await getNextProductId(storeId);
-        productData.productId = productId;
 
         productData.position = await getNextProductPosition(storeId);
 
@@ -42,13 +46,45 @@ async function addProduct(name, price) {
     }
 }
 
-async function getNextProductId(storeId) {
-    const storeRef = doc(db, "stores", storeId);
-    await updateDoc(storeRef, { productCounter: increment(1) });
-    const storeSnap = await getDoc(storeRef);
-    return storeSnap.data().productCounter;
+function cleanPriceInput(input) {
+    const sanitized = String(input).replace(",", ".").replace(/[^0-9.]/g, "");
+    return parseFloat(sanitized);
 }
 
+  function cleanProductName(name) {
+    return name
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/мл/g, "ml")
+      .replace(/л(?![a-z])/g, "l") 
+      .replace(/гр/g, "g") 
+      .replace(/кг/g, "kg")
+      .replace(/[.,]+$/, "");             
+  }
+
+  function parseUnitFromName(name) {
+    const normalized = name.toLowerCase();
+  
+    const mlMatch = normalized.match(/([\d.,]+)\s*(ml|мл)/);
+    const lMatch = normalized.match(/([\d.,]+)\s*(l|л)/);
+    const gMatch = normalized.match(/([\d.,]+)\s*(g|гр)/);
+    const kgMatch = normalized.match(/([\d.,]+)\s*(kg|кг)/);
+    const pcsMatch = normalized.match(/([\d.,]+)?\s*(бр|pcs|count)/);
+  
+    if (mlMatch) {
+      return { unitType: "ml", unitValue: parseFloat(mlMatch[1].replace(",", ".")) };
+    } else if (lMatch) {
+      return { unitType: "ml", unitValue: parseFloat(lMatch[1].replace(",", ".")) * 1000 };
+    } else if (kgMatch) {
+      return { unitType: "g", unitValue: parseFloat(kgMatch[1].replace(",", ".")) * 1000 };
+    } else if (gMatch) {
+      return { unitType: "g", unitValue: parseFloat(gMatch[1].replace(",", ".")) };
+    } else if (pcsMatch) {
+      return { unitType: "count", unitValue: parseInt(pcsMatch[1]) || 1 };
+    }
+  
+    return null;
+  }
 async function getNextProductPosition(storeId) {
     const productsQuery = query(collection(db, "products"), where("storeId", "==", storeId), orderBy("position", "desc"));
     const productsSnapshot = await getDocs(productsQuery);

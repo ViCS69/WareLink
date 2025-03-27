@@ -12,7 +12,7 @@ async function handleLogin(e) {
     const password = document.getElementById("login-password").value.trim();
 
     if (!email || !password) {
-        showError("❌ Моля, въведете имейл и парола!");
+        showError("Моля, въведете имейл и парола!");
         return;
     }
 
@@ -20,14 +20,14 @@ async function handleLogin(e) {
         await signInWithEmailAndPassword(auth, email, password);
         window.location.href = "loggedIn.html"; 
     } catch (error) {
-        console.error("❌ Login error:", error);
+        console.error("Login error:", error);
         
         if (error.code === "auth/user-not-found") {
-            showError("❌ Невалиден имейл или потребителят не съществува.");
+            showError("Невалиден имейл или потребителят не съществува.");
         } else if (error.code === "auth/wrong-password") {
-            showError("❌ Грешна парола. Опитайте отново.");
+            showError("Грешна парола. Опитайте отново.");
         } else {
-            showError(`❌ ${error.message}`);
+            showError(`${error.message}`);
         }
     }
 }

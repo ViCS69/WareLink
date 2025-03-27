@@ -20,24 +20,27 @@
 
         async function loadOrders() {
     const userId = localStorage.getItem("userUID");
+    const ordersContainer = document.getElementById("orders-container");
+
     if (!userId) {
-        document.getElementById("orders-container").innerHTML = "<p class='text-gray-500'>Please log in to view your orders.</p>";
+        ordersContainer.innerHTML = "<p class='text-gray-500'>Please log in to view your orders.</p>";
         return;
     }
 
-    const ordersQuery = query(collection(db, "orders"), where("userId", "==", userId), orderBy("timestamp", "desc"));
+    const ordersQuery = query(
+        collection(db, "users", userId, "orders"),
+        orderBy("timestamp", "desc")
+    );
     const ordersSnapshot = await getDocs(ordersQuery);
 
-    const ordersContainer = document.getElementById("orders-container");
     ordersContainer.innerHTML = "";
 
     if (ordersSnapshot.empty) {
-        console.log("❌ No orders found!");
         ordersContainer.innerHTML = "<p class='text-gray-500'>No orders found.</p>";
         return;
     }
 
-    let storeDataCache = {}; 
+    const storeDataCache = {};
 
     for (const orderDoc of ordersSnapshot.docs) {
         const order = orderDoc.data();
@@ -45,11 +48,9 @@
         if (!storeDataCache[order.storeId]) {
             const storeRef = doc(db, "stores", order.storeId);
             const storeSnap = await getDoc(storeRef);
-            if (storeSnap.exists()) {
-                storeDataCache[order.storeId] = storeSnap.data();
-            } else {
-                storeDataCache[order.storeId] = { storeName: "Unknown Store", logoUrl: "./resources/default.svg" };
-            }
+            storeDataCache[order.storeId] = storeSnap.exists()
+                ? storeSnap.data()
+                : { storeName: "Unknown Store", logoUrl: "./resources/default.svg" };
         }
 
         const storeInfo = storeDataCache[order.storeId];
@@ -58,24 +59,21 @@
         orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
 
         orderElement.innerHTML = `
-    <div class="flex items-center gap-4 mb-2">
-        <img src="${storeInfo.logoUrl || './resources/default.svg'}" 
-             alt="${storeInfo.storeName}" 
-             class="w-12 h-12 object-cover rounded">
-        <h2 class="text-lg font-semibold">${storeInfo.storeName}</h2>
-        </div>
-        <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
-        <p class="text-sm text-gray-600">Total: ${order.total.toFixed(2)}лв.</p>
-        <p class="text-sm text-gray-600">Placed on: ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
-        <ul class="mt-2 list-disc list-inside">
-         ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
-        </ul>
-        `;
+            <div class="flex items-center gap-4 mb-2">
+                <img src="${storeInfo.logoUrl || './resources/default.svg'}"
+                     alt="${storeInfo.storeName}" 
+                     class="w-12 h-12 object-cover rounded">
+                <h2 class="text-lg font-semibold">${storeInfo.storeName}</h2>
+            </div>
+            <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
+            <p class="text-sm text-gray-600">Total: ${order.total.toFixed(2)}лв.</p>
+            <p class="text-sm text-gray-600">Placed on: ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
+            <ul class="mt-2 list-disc list-inside">
+                ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
+            </ul>
+        `;}
+    }
 
-
-                ordersContainer.appendChild(orderElement);
-            }
-        }
 
         document.addEventListener("DOMContentLoaded", loadOrders);
     </script>

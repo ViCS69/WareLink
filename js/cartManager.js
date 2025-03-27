@@ -1,5 +1,8 @@
-import { db } from "./firebaseConfig.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { db, auth } from "./firebaseConfig.js";
+import { collection, doc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+
+const userId = auth.currentUser?.uid;
 
 let cartItems = []; 
 
@@ -59,19 +62,29 @@ function updateCart(storeId) {
         cartItem.classList.add("flex", "items-center", "justify-between", "py-2", "border-b");
 
         cartItem.innerHTML = `
-            <div class="flex items-center gap-2">
-                <div class="w-16 h-16 flex items-center justify-center bg-gray-100 border rounded overflow-hidden">
-                    <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-full object-contain">
-                </div>
-                <div>
-                    <p class="font-medium">${item.name}</p>
-                    <p class="text-sm">${item.quantity} x ${item.price.toFixed(2)}лв.</p>
-                </div>
+        <div class="flex items-center gap-2">
+            <div class="w-16 h-16 flex items-center justify-center bg-gray-100 border rounded overflow-hidden">
+                <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-full object-contain">
             </div>
+            <div>
+                <p class="font-medium">${item.name}</p>
+                <p class="text-sm">${item.quantity} x ${item.price.toFixed(2)}лв.</p>
+            </div>
+        </div>
+        <div class="flex flex-col items-end">
             <p class="font-semibold">${(item.price * item.quantity).toFixed(2)}лв.</p>
-        `;
+            <button class="text-red-500 text-sm mt-1 hover:underline" data-remove="${item.id}">Remove</button>
+        </div>
+`;
+
 
         cartContainer.appendChild(cartItem);
+        const removeBtn = cartItem.querySelector("[data-remove]");
+        if (removeBtn) {
+        removeBtn.addEventListener("click", () => {
+        removeFromCart(removeBtn.dataset.remove);
+    });
+}
     });
 
     document.getElementById("cart-total").textContent = `${total.toFixed(2)}лв.`;
@@ -81,37 +94,67 @@ function updateCart(storeId) {
 
 async function checkout() {
     const storeId = localStorage.getItem("currentStoreId");
-    if (!storeId) {
-        alert("❌ No store selected for checkout!");
+    console.log(storeId)
+
+    const userId = localStorage.getItem("userUID");
+    console.log("Current user:", userId);
+
+    if (!storeId || !userId) {
+        alert("❌ Store or user not set!");
         return;
     }
 
     const cartKey = `cart_${storeId}`;
-    let cartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const localCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-    if (cartItems.length === 0) {
+    if (localCartItems.length === 0) {
         alert("❌ Your cart is empty!");
         return;
     }
 
     try {
+        const total = localCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const order = {
-            storeId: storeId,
-            userId: localStorage.getItem("userUID") || "guest",
-            items: cartItems,
-            total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-            timestamp: serverTimestamp(),
+            storeId,
+            userId,
+            items: localCartItems,
+            total,
+            status: "pending",
+            timestamp: serverTimestamp()
         };
-        await addDoc(collection(db, "orders"), order);
+
+        // Generate a shared order ID
+        const tempOrderRef = await addDoc(collection(db, "tempOrderId"), {}); // dummy collection
+        const orderId = tempOrderRef.id;
+        await deleteDoc(tempOrderRef); // clean up the temp doc
+
+        // Write to user orders and store receivedOrders
+        const userOrderRef = collection(db, "users", userId, "orders");
+        const storeOrderRef = collection(db, "stores", storeId, "receivedOrders");
+
+        try {
+            await setDoc(doc(userOrderRef, orderId), order);
+            window.location.href = "orders.html";
+            console.log("✅ User order placed.");
+        } catch (e) {
+            console.error("❌ Failed to write user order:", e);
+        }
+        
+        try {
+            await setDoc(doc(storeOrderRef, orderId), order);
+            console.log("✅ Store order placed.");
+        } catch (e) {
+            console.error("❌ Failed to write store order:", e);
+        }
+
+        // Clear cart
+        localStorage.removeItem(cartKey);
+        cartItems = [];
+        document.getElementById("cart-items").innerHTML = "";
+        document.getElementById("cart-total").textContent = "0.00лв.";
 
         alert("✅ Checkout successful! Your order has been placed.");
-
-        localStorage.removeItem(cartKey); 
-        cartItems = []; 
-        document.getElementById("cart-items").innerHTML = ""; 
-        document.getElementById("cart-total").textContent = "0.00лв."; 
         
-        window.location.href = "orders.html";
     } catch (error) {
         console.error("❌ Error processing checkout:", error);
         alert("⚠️ Error placing order. Please try again.");
@@ -119,6 +162,15 @@ async function checkout() {
 }
 
 
+
+function removeFromCart(productId) {
+    const storeId = localStorage.getItem("currentStoreId");
+    if (!storeId) return;
+
+    cartItems = cartItems.filter(item => item.id !== productId);
+    saveCart(storeId);
+    updateCart(storeId);
+}
 
 
 document.addEventListener("DOMContentLoaded", () => {

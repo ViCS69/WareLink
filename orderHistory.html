@@ -25,7 +25,10 @@
             if (storeSnapshot.empty) return;
 
             const storeId = storeSnapshot.docs[0].id;
-            const ordersQuery = query(collection(db, "orderHistory"), where("storeId", "==", storeId), orderBy("timestamp", "desc"));
+            const ordersQuery = query(
+                collection(db, "stores", storeId, "orderHistory"),
+                orderBy("timestamp", "desc")
+            );
             const ordersSnapshot = await getDocs(ordersQuery);
 
             const ordersContainer = document.getElementById("orders-container");

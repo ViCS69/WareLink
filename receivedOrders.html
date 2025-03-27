@@ -14,10 +14,12 @@
     </div>
 
     <script type="module">
-        import { db } from "./js/firebaseConfig.js";
+        import { db, auth } from "./js/firebaseConfig.js";
         import { collection, query, where, getDocs, doc, getDoc, deleteDoc, setDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-        async function loadReceivedOrders() {
+
+    async function loadReceivedOrders() {
     const userId = localStorage.getItem("userUID");
     if (!userId) return;
 
@@ -25,8 +27,12 @@
     const storeSnapshot = await getDocs(storeQuery);
     if (storeSnapshot.empty) return;
 
-    const storeId = storeSnapshot.docs[0].id;
-    const ordersQuery = query(collection(db, "orders"), where("storeId", "==", storeId), orderBy("timestamp", "desc"));
+    const storeId = userId;
+    localStorage.setItem("currentStoreId", storeId);
+    const ordersQuery = query(
+        collection(db, "stores", storeId, "receivedOrders"),
+        orderBy("timestamp", "desc")
+    );
     const ordersSnapshot = await getDocs(ordersQuery);
 
     const ordersContainer = document.getElementById("orders-container");
@@ -72,12 +78,14 @@
 }
 
 async function completeOrder(orderId) {
-    const orderRef = doc(db, "orders", orderId);
+    const storeId =  localStorage.getItem("currentStoreId");
+    
+    const orderRef = doc(db, "stores", storeId, "receivedOrders", orderId);
     const orderSnap = await getDoc(orderRef);
     if (!orderSnap.exists()) return;
 
     const orderData = orderSnap.data();
-    const orderHistoryRef = doc(db, "orderHistory", orderId);
+    const orderHistoryRef = doc(db, "stores", storeId, "orderHistory", orderId);
 
     await setDoc(orderHistoryRef, orderData);
     await deleteDoc(orderRef);
@@ -85,7 +93,17 @@ async function completeOrder(orderId) {
     loadReceivedOrders();
 }
 
-document.addEventListener("DOMContentLoaded", loadReceivedOrders);
+document.addEventListener("DOMContentLoaded", () => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      localStorage.setItem("userUID", user.uid);
+      console.log("Signed in as:", user.uid);
+      loadReceivedOrders();
+    } else {
+      console.log("User not logged in");
+    }
+  });
+});
     </script>
 </body>
 </html>

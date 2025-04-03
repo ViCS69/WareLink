@@ -1,5 +1,5 @@
 import { db, auth } from "./firebaseConfig.js";
-import { collection, doc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { collection, doc, getDoc, addDoc, setDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
 
 const userId = auth.currentUser?.uid;
@@ -94,74 +94,63 @@ function updateCart(storeId) {
 
 async function checkout() {
     const storeId = localStorage.getItem("currentStoreId");
-    console.log(storeId)
-
-    const userId = localStorage.getItem("userUID");
-    console.log("Current user:", userId);
-
-    if (!storeId || !userId) {
-        alert("❌ Store or user not set!");
-        return;
+    const currentUser = auth.currentUser;
+    
+    if (!storeId || !currentUser) {
+      alert("❌ Store or user not set or user not authenticated!");
+      return;
     }
-
+    const userId = currentUser.uid;
     const cartKey = `cart_${storeId}`;
     const localCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
-
+  
     if (localCartItems.length === 0) {
-        alert("❌ Your cart is empty!");
-        return;
+      alert("❌ Your cart is empty!");
+      return;
     }
-
+  
     try {
+        const userDocRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userDocRef);
+        const userData = userSnap.exists() ? userSnap.data() : {};
+        const businessName = userData.businessName?.trim();
+        console.log(businessName)
+        
         const total = localCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const order = {
             storeId,
             userId,
+            email: userData.email || currentUser.email || "unknown",
+            businessName: businessName || "N/A",
             items: localCartItems,
             total,
             status: "pending",
             timestamp: serverTimestamp()
-        };
-
-        // Generate a shared order ID
-        const tempOrderRef = await addDoc(collection(db, "tempOrderId"), {}); // dummy collection
-        const orderId = tempOrderRef.id;
-        await deleteDoc(tempOrderRef); // clean up the temp doc
-
-        // Write to user orders and store receivedOrders
+          };
+      
+        const orderId = crypto.randomUUID();
+      
         const userOrderRef = collection(db, "users", userId, "orders");
         const storeOrderRef = collection(db, "stores", storeId, "receivedOrders");
-
-        try {
-            await setDoc(doc(userOrderRef, orderId), order);
-            window.location.href = "orders.html";
-            console.log("✅ User order placed.");
-        } catch (e) {
-            console.error("❌ Failed to write user order:", e);
-        }
-        
-        try {
-            await setDoc(doc(storeOrderRef, orderId), order);
-            console.log("✅ Store order placed.");
-        } catch (e) {
-            console.error("❌ Failed to write store order:", e);
-        }
-
-        // Clear cart
+      
+          await setDoc(doc(userOrderRef, orderId), order);
+          await setDoc(doc(storeOrderRef, orderId), order);     
+      
         localStorage.removeItem(cartKey);
         cartItems = [];
         document.getElementById("cart-items").innerHTML = "";
         document.getElementById("cart-total").textContent = "0.00лв.";
-
+      
         alert("✅ Checkout successful! Your order has been placed.");
-        
-    } catch (error) {
+        // window.location.href = "orders.html";
+      
+      } catch (error) {
         console.error("❌ Error processing checkout:", error);
         alert("⚠️ Error placing order. Please try again.");
-    }
-}
-
-
+      }
+      
+  }
+  
 
 function removeFromCart(productId) {
     const storeId = localStorage.getItem("currentStoreId");

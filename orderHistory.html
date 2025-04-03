@@ -41,9 +41,10 @@
 
             for (const orderDoc of ordersSnapshot.docs) {
                 const order = orderDoc.data();
-                const customerRef = doc(db, "users", order.userId);
-                const customerSnap = await getDoc(customerRef);
-                const customer = customerSnap.exists() ? customerSnap.data() : { email: "Unknown", businessName: "N/A" };
+                const customer = {
+                    email: order.email || "Unknown",
+                    businessName: order.businessName || "N/A"
+                };
 
                 const orderElement = document.createElement("div");
                 orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");

@@ -27,52 +27,60 @@
         return;
     }
 
-    const ordersQuery = query(
-        collection(db, "users", userId, "orders"),
-        orderBy("timestamp", "desc")
-    );
-    const ordersSnapshot = await getDocs(ordersQuery);
+    try {
+        const ordersQuery = query(
+            collection(db, "users", userId, "orders"),
+            orderBy("timestamp", "desc")
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
 
-    ordersContainer.innerHTML = "";
+        ordersContainer.innerHTML = "";
 
-    if (ordersSnapshot.empty) {
-        ordersContainer.innerHTML = "<p class='text-gray-500'>No orders found.</p>";
-        return;
-    }
-
-    const storeDataCache = {};
-
-    for (const orderDoc of ordersSnapshot.docs) {
-        const order = orderDoc.data();
-
-        if (!storeDataCache[order.storeId]) {
-            const storeRef = doc(db, "stores", order.storeId);
-            const storeSnap = await getDoc(storeRef);
-            storeDataCache[order.storeId] = storeSnap.exists()
-                ? storeSnap.data()
-                : { storeName: "Unknown Store", logoUrl: "./resources/default.svg" };
+        if (ordersSnapshot.empty) {
+            ordersContainer.innerHTML = "<p class='text-gray-500'>No orders found.</p>";
+            return;
         }
 
-        const storeInfo = storeDataCache[order.storeId];
+        const storeDataCache = {};
 
-        const orderElement = document.createElement("div");
-        orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+        for (const orderDoc of ordersSnapshot.docs) {
+            const order = orderDoc.data();
 
-        orderElement.innerHTML = `
-            <div class="flex items-center gap-4 mb-2">
-                <img src="${storeInfo.logoUrl || './resources/default.svg'}"
-                     alt="${storeInfo.storeName}" 
-                     class="w-12 h-12 object-cover rounded">
-                <h2 class="text-lg font-semibold">${storeInfo.storeName}</h2>
-            </div>
-            <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
-            <p class="text-sm text-gray-600">Total: ${order.total.toFixed(2)}лв.</p>
-            <p class="text-sm text-gray-600">Placed on: ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
-            <ul class="mt-2 list-disc list-inside">
-                ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
-            </ul>
-        `;}
+            if (!storeDataCache[order.storeId]) {
+                const storeRef = doc(db, "stores", order.storeId);
+                const storeSnap = await getDoc(storeRef);
+                storeDataCache[order.storeId] = storeSnap.exists()
+                    ? storeSnap.data()
+                    : { storeName: "Unknown Store", logoUrl: "./resources/default.svg" };
+            }
+
+            const storeInfo = storeDataCache[order.storeId];
+
+            const orderElement = document.createElement("div");
+            orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+
+            orderElement.innerHTML = `
+                <div class="flex items-center gap-4 mb-2">
+                    <img src="${storeInfo.logoUrl || './resources/default.svg'}"
+                         alt="${storeInfo.storeName}" 
+                         class="w-12 h-12 object-cover rounded">
+                    <h2 class="text-lg font-semibold">${storeInfo.storeName}</h2>
+                </div>
+                <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
+                <p class="text-sm text-gray-600">Total: ${order.total.toFixed(2)}лв.</p>
+                <p class="text-sm text-gray-600">Placed on: ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
+                <ul class="mt-2 list-disc list-inside">
+                    ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
+                </ul>
+            `;
+            ordersContainer.appendChild(orderElement);
+        }
+    } catch (error) {
+        console.error("Error loading orders:", error);
+        ordersContainer.innerHTML = `<p class="text-red-500">Error loading orders: ${error.message}</p>`;
     }
+}
+
 
 
         document.addEventListener("DOMContentLoaded", loadOrders);

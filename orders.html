@@ -1,89 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Orders</title>
-    <link rel="stylesheet" href="src/styles.css">
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
     <div class="w-4/5 max-w-3xl bg-white p-6 shadow-lg rounded-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">My Orders</h1>
-        <div id="orders-container" class="space-y-6">
-          
-        </div>
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">My Orders</h1>
+      <div id="orders-container" class="space-y-6"></div>
     </div>
 
     <script type="module">
-        import { db } from "./js/firebaseConfig.js";
-        import { collection, query, where, getDocs, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+      import { db } from "./js/firebaseConfig.js";
+      import {
+        collection,
+        query,
+        where,
+        getDocs,
+        doc,
+        getDoc,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
-        async function loadOrders() {
-    const userId = localStorage.getItem("userUID");
-    const ordersContainer = document.getElementById("orders-container");
+      async function loadOrders() {
+        const userId = localStorage.getItem("userUID");
+        const ordersContainer = document.getElementById("orders-container");
 
-    if (!userId) {
-        ordersContainer.innerHTML = "<p class='text-gray-500'>Please log in to view your orders.</p>";
-        return;
-    }
-
-    try {
-        const ordersQuery = query(
-            collection(db, "users", userId, "orders"),
-            orderBy("timestamp", "desc")
-        );
-        const ordersSnapshot = await getDocs(ordersQuery);
-
-        ordersContainer.innerHTML = "";
-
-        if (ordersSnapshot.empty) {
-            ordersContainer.innerHTML = "<p class='text-gray-500'>No orders found.</p>";
-            return;
+        if (!userId) {
+          ordersContainer.innerHTML =
+            "<p class='text-gray-500'>Please log in to view your orders.</p>";
+          return;
         }
 
-        const storeDataCache = {};
+        try {
+          const ordersQuery = query(
+            collection(db, "users", userId, "orders"),
+            orderBy("timestamp", "desc")
+          );
+          const ordersSnapshot = await getDocs(ordersQuery);
 
-        for (const orderDoc of ordersSnapshot.docs) {
+          ordersContainer.innerHTML = "";
+
+          if (ordersSnapshot.empty) {
+            ordersContainer.innerHTML =
+              "<p class='text-gray-500'>No orders found.</p>";
+            return;
+          }
+
+          const storeDataCache = {};
+
+          for (const orderDoc of ordersSnapshot.docs) {
             const order = orderDoc.data();
 
             if (!storeDataCache[order.storeId]) {
-                const storeRef = doc(db, "stores", order.storeId);
-                const storeSnap = await getDoc(storeRef);
-                storeDataCache[order.storeId] = storeSnap.exists()
-                    ? storeSnap.data()
-                    : { storeName: "Unknown Store", logoUrl: "./resources/default.svg" };
+              const storeRef = doc(db, "stores", order.storeId);
+              const storeSnap = await getDoc(storeRef);
+              storeDataCache[order.storeId] = storeSnap.exists()
+                ? storeSnap.data()
+                : {
+                    storeName: "Unknown Store",
+                    logoUrl: "./resources/default.svg",
+                  };
             }
 
             const storeInfo = storeDataCache[order.storeId];
 
             const orderElement = document.createElement("div");
-            orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+            orderElement.classList.add(
+              "border",
+              "p-4",
+              "rounded",
+              "shadow-sm",
+              "bg-gray-50"
+            );
 
             orderElement.innerHTML = `
                 <div class="flex items-center gap-4 mb-2">
-                    <img src="${storeInfo.logoUrl || './resources/default.svg'}"
+                    <img src="${storeInfo.logoUrl || "./resources/default.svg"}"
                          alt="${storeInfo.storeName}" 
                          class="w-12 h-12 object-cover rounded">
-                    <h2 class="text-lg font-semibold">${storeInfo.storeName}</h2>
+                    <h2 class="text-lg font-semibold">${
+                      storeInfo.storeName
+                    }</h2>
                 </div>
                 <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
-                <p class="text-sm text-gray-600">Total: ${order.total.toFixed(2)}лв.</p>
-                <p class="text-sm text-gray-600">Placed on: ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
+                <p class="text-sm text-gray-600">Total: ${order.total.toFixed(
+                  2
+                )}лв.</p>
+                <p class="text-sm text-gray-600">Placed on: ${new Date(
+                  order.timestamp.seconds * 1000
+                ).toLocaleString()}</p>
                 <ul class="mt-2 list-disc list-inside">
-                    ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
+                    ${order.items
+                      .map(
+                        (item) =>
+                          `<li class="text-sm">${item.quantity}x ${
+                            item.name
+                          } - ${item.price.toFixed(2)}лв.</li>`
+                      )
+                      .join("")}
                 </ul>
             `;
             ordersContainer.appendChild(orderElement);
+          }
+        } catch (error) {
+          console.error("Error loading orders:", error);
+          ordersContainer.innerHTML = `<p class="text-red-500">Error loading orders: ${error.message}</p>`;
         }
-    } catch (error) {
-        console.error("Error loading orders:", error);
-        ordersContainer.innerHTML = `<p class="text-red-500">Error loading orders: ${error.message}</p>`;
-    }
-}
+      }
 
-
-
-        document.addEventListener("DOMContentLoaded", loadOrders);
+      document.addEventListener("DOMContentLoaded", loadOrders);
     </script>
-</body>
+  </body>
 </html>

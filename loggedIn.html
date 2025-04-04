@@ -1,174 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="src/styles.css" rel="stylesheet">
+    <link href="src/styles.css" rel="stylesheet" />
     <style>
-        .section { display: none; } 
-        .section.active { display: block;} 
-        body.noscroll {overflow: hidden;}
-        #close-settings-top:hover {
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+      body.noscroll {
+        overflow: hidden;
+      }
+      #close-settings-top:hover {
         transform: scale(1.2);
         transition: transform 0.2s ease-in-out;
-  }
+      }
     </style>
-</head>
-<body>
-    
-    <header class="w-4/5 mx-auto flex items-center justify-between px-6 py-4 mb-32">
-        <div class="flex items-center justify-center">
-        <img src="resources/WareLinkT.png" alt="WareLinkLogo" class="w-64 h-auto cursor-pointer" onclick="switchSection('home')">
-        <p class="cursor-pointer text-xl mr-3 italic  hover:text-blue-500" onclick="switchSection('pricing')">Цени</p>  
-        </div>
-        <p id="user-email" class="hidden  italic"></p>
-        
-        <div>
-            <a href="store.html" id="proceed-btn" class="w-48 h-auto bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                Магазин
-            </a> 
-            <a id="logout-link" class="text-xl italic hover:text-blue-500 ml-3">Изход</a>
-            <button id="settings-btn" class="text-xl hover:scale-125 hover:text-blue-500 transition-transform duration-200 hidden">⚙️</button>          
-        </div>
+  </head>
+  <body>
+    <header
+      class="w-4/5 mx-auto flex items-center justify-between px-6 py-4 mb-32"
+    >
+      <div class="flex items-center justify-center">
+        <img
+          src="resources/WareLinkT.png"
+          alt="WareLinkLogo"
+          class="w-64 h-auto cursor-pointer"
+          onclick="switchSection('home')"
+        />
+        <p
+          class="cursor-pointer text-xl mr-3 italic hover:text-blue-500"
+          onclick="switchSection('pricing')"
+        >
+          Цени
+        </p>
+      </div>
+      <p id="user-email" class="hidden italic"></p>
 
-        
-       
+      <div>
+        <a
+          href="store.html"
+          id="proceed-btn"
+          class="w-48 h-auto bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Магазин
+        </a>
+        <a id="logout-link" class="text-xl italic hover:text-blue-500 ml-3"
+          >Изход</a
+        >
+        <button
+          id="settings-btn"
+          class="text-xl hover:scale-125 hover:text-blue-500 transition-transform duration-200 hidden"
+        >
+          ⚙️
+        </button>
+      </div>
     </header>
     <section id="home" class="section active">
-        <div class="flex justify-center items-center py-3">
-            <a href="orders.html" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-              View orders
-            </a>
-          </div>
-    <div class="text-center">
-        <input type="text" id="searchStore" class="border-2 border-black" placeholder="Търсене на магазини...">
+      <div class="flex justify-center items-center py-3">
+        <a
+          href="orders.html"
+          class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
+        >
+          View orders
+        </a>
+      </div>
+      <div class="text-center">
+        <input
+          type="text"
+          id="searchStore"
+          class="border-2 border-black"
+          placeholder="Търсене на магазини..."
+        />
         <ul id="storeList"></ul>
-        <p id="noResults" style="display: none;">няма намерени магазини</p>
-    </div>
+        <p id="noResults" style="display: none">няма намерени магазини</p>
+      </div>
     </section>
-    
+
     <section id="pricing" class="section pb-14">
-        <div class="text-center py-10">
-            <p class="mb-5 text-2xl">Ценови планове</p>
-            <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">
-                Гъвкави цени спрямо нуждите <br> на потребителя:
-            </h1>
-        </div>
-    
-        <div class="w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-900">Стартов</h2>
-                    <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
-                    <p class="mt-1 text-3xl font-semibold text-gray-900">20€ <span class="text-lg">/месец</span></p>
-                    <hr class="my-4 border-gray-300">
-                    
-                    <p class="text-sm text-gray-500">Брой продукти</p>
-                    <p class="text-gray-900 text-lg font-bold">До 500</p>
-                    <hr class="my-2 border-gray-300">
-    
-                    <p class="text-sm text-gray-500">Анализи</p>
-                    <p class="text-gray-900 text-lg font-bold">Базови анализи</p>
-                    <hr class="my-2 border-gray-300">
-                </div>
-    
-                <button data-plan="starter" class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                    Започни
-                </button>
-            </div>
-    
-            <div class="relative h-full flex flex-col">
-                <div class="absolute -top-6 w-full bg-gray-800 text-white text-center text-sm font-bold py-1 rounded-t-lg">
-                    Най-популярен
-                </div>
-    
-                <div class="bg-white p-6 shadow-lg border border-gray-300 flex flex-col justify-between h-full w-full rounded-b-xl">
-                    <div>
-                        <h2 class="text-xl font-bold text-gray-900">Базов</h2>
-                        <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
-                        <p class="mt-1 text-3xl font-semibold text-gray-900">40€ <span class="text-lg">/месец</span></p>
-                        <hr class="my-4 border-gray-300">
-    
-                        <p class="text-sm text-gray-500">Брой продукти</p>
-                        <p class="text-gray-900 text-lg font-bold">До 1500</p>
-                        <hr class="my-2 border-gray-300">
-    
-                        <p class="text-sm text-gray-500">Анализи</p>
-                        <p class="text-gray-900 text-lg font-bold">Напреднали анализи</p>
-                        <hr class="my-2 border-gray-300">
-                    </div>
-    
-                    <button data-plan="base" class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                        Започни
-                    </button>
-                </div>
-            </div>
-    
-            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-900">Професионален</h2>
-                    <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
-                    <p class="mt-1 text-3xl font-semibold text-gray-900">99€ <span class="text-lg">/месец</span></p>
-                    <hr class="my-4 border-gray-300">
-    
-                    <p class="text-sm text-gray-500">Брой продукти</p>
-                    <p class="text-gray-900 text-lg font-bold">Безброй</p>
-                    <hr class="my-2 border-gray-300">
-    
-                    <p class="text-sm text-gray-500">Анализи</p>
-                    <p class="text-gray-900 text-lg font-bold">Професионални анализи</p>
-                    <hr class="my-2 border-gray-300">
-    
-                    <p class="text-sm text-gray-500">Поддръжка</p>
-                    <p class="text-gray-900 text-lg font-bold">Поддръжка на пълно работно време</p>
-                    <hr class="my-2 border-gray-300">
-                </div>
-    
-                <button data-plan="professional" class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
-                    Започни
-                </button>
-            </div>
-        </div>
-</section>
+      <div class="text-center py-10">
+        <p class="mb-5 text-2xl">Ценови планове</p>
+        <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">
+          Гъвкави цени спрямо нуждите <br />
+          на потребителя:
+        </h1>
+      </div>
 
-    
-    
-    
+      <div
+        class="w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
+        <div
+          class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
+        >
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">Стартов</h2>
+            <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+            <p class="mt-1 text-3xl font-semibold text-gray-900">
+              20€ <span class="text-lg">/месец</span>
+            </p>
+            <hr class="my-4 border-gray-300" />
 
-    <div id="settings-tab" class="hidden fixed inset-0 bg-white overflow-hidden">
-        <div class="max-w-lg w-full mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
-            <h2 class="text-lg font-bold mb-4">Настройки</h2>
-            <div id="settings-loading" class="hidden text-gray-500">Зареждане...</div>
-            <div id="settings-fields" class="space-y-2">
-                <div id="business-name"></div>
-                <div id="eik"></div>
-                <div id="zdds"></div>
-                <div id="mol"></div>
-                <div id="address"></div>
-            </div>
-            <button id="save-settings" class="mt-4 bg-blue-500 text-white p-2 rounded">Запази</button>
-            <button id="close-settings" class="mt-4 bg-gray-900 text-white p-2 rounded">Затвори</button>
+            <p class="text-sm text-gray-500">Брой продукти</p>
+            <p class="text-gray-900 text-lg font-bold">До 500</p>
+            <hr class="my-2 border-gray-300" />
+
+            <p class="text-sm text-gray-500">Анализи</p>
+            <p class="text-gray-900 text-lg font-bold">Базови анализи</p>
+            <hr class="my-2 border-gray-300" />
+          </div>
+
+          <button
+            data-plan="starter"
+            class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Започни
+          </button>
         </div>
+
+        <div class="relative h-full flex flex-col">
+          <div
+            class="absolute -top-6 w-full bg-gray-800 text-white text-center text-sm font-bold py-1 rounded-t-lg"
+          >
+            Най-популярен
+          </div>
+
+          <div
+            class="bg-white p-6 shadow-lg border border-gray-300 flex flex-col justify-between h-full w-full rounded-b-xl"
+          >
+            <div>
+              <h2 class="text-xl font-bold text-gray-900">Базов</h2>
+              <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+              <p class="mt-1 text-3xl font-semibold text-gray-900">
+                40€ <span class="text-lg">/месец</span>
+              </p>
+              <hr class="my-4 border-gray-300" />
+
+              <p class="text-sm text-gray-500">Брой продукти</p>
+              <p class="text-gray-900 text-lg font-bold">До 1500</p>
+              <hr class="my-2 border-gray-300" />
+
+              <p class="text-sm text-gray-500">Анализи</p>
+              <p class="text-gray-900 text-lg font-bold">Напреднали анализи</p>
+              <hr class="my-2 border-gray-300" />
+            </div>
+
+            <button
+              data-plan="base"
+              class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            >
+              Започни
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
+        >
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">Професионален</h2>
+            <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+            <p class="mt-1 text-3xl font-semibold text-gray-900">
+              99€ <span class="text-lg">/месец</span>
+            </p>
+            <hr class="my-4 border-gray-300" />
+
+            <p class="text-sm text-gray-500">Брой продукти</p>
+            <p class="text-gray-900 text-lg font-bold">Безброй</p>
+            <hr class="my-2 border-gray-300" />
+
+            <p class="text-sm text-gray-500">Анализи</p>
+            <p class="text-gray-900 text-lg font-bold">Професионални анализи</p>
+            <hr class="my-2 border-gray-300" />
+
+            <p class="text-sm text-gray-500">Поддръжка</p>
+            <p class="text-gray-900 text-lg font-bold">
+              Поддръжка на пълно работно време
+            </p>
+            <hr class="my-2 border-gray-300" />
+          </div>
+
+          <button
+            data-plan="professional"
+            class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Започни
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div
+      id="settings-tab"
+      class="hidden fixed inset-0 bg-white overflow-hidden"
+    >
+      <div
+        class="max-w-lg w-full mx-auto p-6 bg-white rounded-lg shadow-lg mt-10"
+      >
+        <h2 class="text-lg font-bold mb-4">Настройки</h2>
+        <div id="settings-loading" class="hidden text-gray-500">
+          Зареждане...
+        </div>
+        <div id="settings-fields" class="space-y-2">
+          <div id="business-name"></div>
+          <div id="eik"></div>
+          <div id="zdds"></div>
+          <div id="mol"></div>
+          <div id="address"></div>
+        </div>
+        <button
+          id="save-settings"
+          class="mt-4 bg-blue-500 text-white p-2 rounded"
+        >
+          Запази
+        </button>
+        <button
+          id="close-settings"
+          class="mt-4 bg-gray-900 text-white p-2 rounded"
+        >
+          Затвори
+        </button>
+      </div>
     </div>
 
     <script type="module" src="js/loggedIn.js"></script>
     <script>
-        function switchSection(sectionId) {
-
-        document.querySelectorAll('section').forEach(section => {
-            section.classList.remove('active');
-            section.style.display = 'none';
+      function switchSection(sectionId) {
+        document.querySelectorAll("section").forEach((section) => {
+          section.classList.remove("active");
+          section.style.display = "none";
         });
-
 
         const activeSection = document.getElementById(sectionId);
         if (activeSection) {
-        activeSection.classList.add('active');
-        activeSection.style.display = 'block';
+          activeSection.classList.add("active");
+          activeSection.style.display = "block";
         }
-}
+      }
     </script>
-</body>
+  </body>
 </html>

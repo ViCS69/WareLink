@@ -1,207 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shop</title>
-    <link href="/src/styles.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="/src/styles.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        .bg-light-blue {
-            background-color: lightblue;
-        }
+      .bg-light-blue {
+        background-color: lightblue;
+      }
     </style>
-</head>
-<body id="storePage" class="font-sans bg-gray-100"><!-- добавих ID защото категориите трябва да зареждат по различен начин в 
+  </head>
+  <body id="storePage" class="font-sans bg-gray-100">
+    <!-- добавих ID защото категориите трябва да зареждат по различен начин в 
     зависимост дали е собствен магазин или друг заради addProducts може да пробвам друго решение по-късно -->
 
     <header class="mx-auto">
-    <div class="flex justify-around h-full">    
-        <div class="w-4/5 mx-auto h-full flex items-center justify-between bg-white shadow-md py-4 px-6">
-            <div class="flex items-center">
-                <div id="storeLogoContainer" 
-                    class="relative w-16 h-16 cursor-pointer bg-cover bg-center border-2 border-gray-300 rounded-lg flex items-center justify-center overflow-hidden"
-                    onclick="document.getElementById('logoUploader').click()" 
-                    onmouseover="showUploadIcon()" onmouseleave="hideUploadIcon()">
-                    <img id="storeLogo" class="absolute w-full h-full object-cover">
+      <div class="flex justify-around h-full">
+        <div
+          class="w-4/5 mx-auto h-full flex items-center justify-between bg-white shadow-md py-4 px-6"
+        >
+          <div class="flex items-center">
+            <div
+              id="storeLogoContainer"
+              class="relative w-16 h-16 cursor-pointer bg-cover bg-center border-2 border-gray-300 rounded-lg flex items-center justify-center overflow-hidden"
+              onclick="document.getElementById('logoUploader').click()"
+              onmouseover="showUploadIcon()"
+              onmouseleave="hideUploadIcon()"
+            >
+              <img id="storeLogo" class="absolute w-full h-full object-cover" />
 
-                    <div id="uploadIcon" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-bold opacity-0 transition-opacity duration-300">
-                        <span>+</span>
-                    </div>
-                
-                    <input type="file" id="logoUploader" accept="image/*" class="hidden">
-                </div>
-        
-                <div class="ml-2 flex justify-center items-center">
-                    <h1 id="storeName" class="text-2xl font-semibold text-gray-800"></h1>
-                </div>
-            </div>
-           
-            <div class="flex items-center gap-4">
-                <button id="addItemBtn" class="add-item-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">+ Add Item</button>
-    
-                <div id="store-actions">
-                    <button id="received-orders-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
-                        View Received Orders
-                    </button>
-                    <button id="order-history-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
-                        Order History
-                    </button>
-                </div>
+              <div
+                id="uploadIcon"
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-bold opacity-0 transition-opacity duration-300"
+              >
+                <span>+</span>
+              </div>
 
-                <div id="store-actions">
-                    <button id="received-orders-btn" class="bg-blue-500 text-white px-4 py-2 rounded hidden">
-                        View Received Orders
-                    </button>
-                </div>
-    
-                <div class="relative group">
-                    <button class="bg-gray-800 text-white px-4 py-2 rounded">Menu</button>
-                    <div id="category-menu" class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                        <div id="categories-list"></div>
-                        <button id="add-category-btn" class="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white">
-                            + Добави категория
-                        </button>
-                    </div>
-                </div>
+              <input
+                type="file"
+                id="logoUploader"
+                accept="image/*"
+                class="hidden"
+              />
             </div>
+
+            <div class="ml-2 flex justify-center items-center">
+              <h1
+                id="storeName"
+                class="text-2xl font-semibold text-gray-800"
+              ></h1>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <button
+              id="addItemBtn"
+              class="add-item-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              + Add Item
+            </button>
+
+            <div id="store-actions">
+              <button
+                id="received-orders-btn"
+                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
+              >
+                View Received Orders
+              </button>
+              <button
+                id="order-history-btn"
+                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
+              >
+                Order History
+              </button>
+            </div>
+
+            <div id="store-actions">
+              <button
+                id="received-orders-btn"
+                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
+              >
+                View Received Orders
+              </button>
+            </div>
+
+            <div class="relative group">
+              <button class="bg-gray-800 text-white px-4 py-2 rounded">
+                Menu
+              </button>
+              <div
+                id="category-menu"
+                class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
+              >
+                <div id="categories-list"></div>
+                <button
+                  id="add-category-btn"
+                  class="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  + Добави категория
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        
-    </div>
+      </div>
     </header>
-    
+
     <main class="w-4/5 container mx-auto px-6">
-        <article class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6" id="itemsContainer"></article>
-        <button id="stopMovingModeBtn" class="hidden mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Stop Moving Mode</button>
+      <article
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6"
+        id="itemsContainer"
+      ></article>
+      <button
+        id="stopMovingModeBtn"
+        class="hidden mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      >
+        Stop Moving Mode
+      </button>
     </main>
 
-<div id="categoryModal" class="fixed inset-0 flex items-center justify-center hidden">
-    <div class="bg-white p-6 rounded shadow-lg w-80 relative">
-        <button id="closeCategoryModal" class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-        <h2 id="categoryModalTitle" class="text-lg font-semibold mb-4">Промяна на категорията</h2>
+    <div
+      id="categoryModal"
+      class="fixed inset-0 flex items-center justify-center hidden"
+    >
+      <div class="bg-white p-6 rounded shadow-lg w-80 relative">
+        <button
+          id="closeCategoryModal"
+          class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl"
+        >
+          &times;
+        </button>
+        <h2 id="categoryModalTitle" class="text-lg font-semibold mb-4">
+          Промяна на категорията
+        </h2>
 
         <form id="changeCategoryForm" class="space-y-4">
-            <select id="categorySelectDropdown" class="w-full border rounded p-2">
-                <option disabled selected>Изберете категория</option>
-            </select>
-            <button type="submit" id="saveCategoryBtn" class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600">
-                Запази
-            </button>
+          <select id="categorySelectDropdown" class="w-full border rounded p-2">
+            <option disabled selected>Изберете категория</option>
+          </select>
+          <button
+            type="submit"
+            id="saveCategoryBtn"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+          >
+            Запази
+          </button>
         </form>
+      </div>
     </div>
-</div>
 
-<div id="addCategoryModal" class="fixed inset-0 flex items-center justify-center hidden">
-    <div class="bg-white p-6 rounded shadow-lg w-80 relative">
-        <button id="closeAddCategoryModal" class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <div
+      id="addCategoryModal"
+      class="fixed inset-0 flex items-center justify-center hidden"
+    >
+      <div class="bg-white p-6 rounded shadow-lg w-80 relative">
+        <button
+          id="closeAddCategoryModal"
+          class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl"
+        >
+          &times;
+        </button>
         <h2 class="text-lg font-semibold mb-4">Добави нова категория</h2>
 
         <form id="addCategoryForm" class="space-y-4">
-            <input type="text" id="categoryNameInput" placeholder="Име на категория" class="w-full border rounded p-2">
-            <button type="submit" id="addCategoryBtn" class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600">
-                Добави
-            </button>
+          <input
+            type="text"
+            id="categoryNameInput"
+            placeholder="Име на категория"
+            class="w-full border rounded p-2"
+          />
+          <button
+            type="submit"
+            id="addCategoryBtn"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+          >
+            Добави
+          </button>
         </form>
+      </div>
     </div>
-</div>
 
-
-    <div id="uploadModal" class="fixed inset-0 items-center justify-center hidden">
-        <div class="bg-white p-6 rounded shadow-lg w-80">
-            <span class="text-xl cursor-pointer float-right" id="closeUploadModal">&times;</span>
-            <h2 class="text-lg font-semibold mb-4">Upload Item</h2>
-            <form id="productForm" class="space-y-4">
-                <ul class="space-y-4">
-                    <li>
-                        <label class="block font-medium">Enter Name:</label>
-                        <input type="text" id="nameInput" class="w-full border rounded p-2" required>
-                    </li>
-                    <li>
-                        <label class="block font-medium">Enter Price:</label>
-                        <input type="text" pattern="\d+(\.\d{1,2})?" title="Enter a valid price" id="priceInput" class="w-full border rounded p-2" required>
-                    </li>
-                    <li>
-                        <label class="block font-medium">Select Category:</label>
-                        <select id="categorySelect" class="w-full border rounded p-2" required>
-                            <option disabled selected>Loading categories...</option>
-                        </select>
-                    </li>
-                    <li>
-                        <label class="block font-medium">Изображение на продукта:</label>
-                        <input type="file" id="productImage" accept="image/*" 
-                               class="w-full border rounded p-2" required>
-                    </li>
-                    <li>
-                        <button type="submit" id="submitBtn" 
-                                class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600">
-                            Submit
-                        </button>
-                    </li>
-                </ul>
-            </form>
-        </div>
+    <div
+      id="uploadModal"
+      class="fixed inset-0 items-center justify-center hidden"
+    >
+      <div class="bg-white p-6 rounded shadow-lg w-80">
+        <span class="text-xl cursor-pointer float-right" id="closeUploadModal"
+          >&times;</span
+        >
+        <h2 class="text-lg font-semibold mb-4">Upload Item</h2>
+        <form id="productForm" class="space-y-4">
+          <ul class="space-y-4">
+            <li>
+              <label class="block font-medium">Enter Name:</label>
+              <input
+                type="text"
+                id="nameInput"
+                class="w-full border rounded p-2"
+                required
+              />
+            </li>
+            <li>
+              <label class="block font-medium">Enter Price:</label>
+              <input
+                type="text"
+                pattern="\d+(\.\d{1,2})?"
+                title="Enter a valid price"
+                id="priceInput"
+                class="w-full border rounded p-2"
+                required
+              />
+            </li>
+            <li>
+              <label class="block font-medium">Select Category:</label>
+              <select
+                id="categorySelect"
+                class="w-full border rounded p-2"
+                required
+              >
+                <option disabled selected>Loading categories...</option>
+              </select>
+            </li>
+            <li>
+              <label class="block font-medium">Изображение на продукта:</label>
+              <input
+                type="file"
+                id="productImage"
+                accept="image/*"
+                class="w-full border rounded p-2"
+                required
+              />
+            </li>
+            <li>
+              <button
+                type="submit"
+                id="submitBtn"
+                class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
+              >
+                Submit
+              </button>
+            </li>
+          </ul>
+        </form>
+      </div>
     </div>
 
     <script type="module" src="js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.17/browser-image-compression.js"></script><!--Библиотека за компресиране на снимките-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.17/browser-image-compression.js"></script>
+    <!--Библиотека за компресиране на снимките-->
     <script type="module">
-        import { db } from "./js/firebaseConfig.js";
-import { collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+      import { db } from "./js/firebaseConfig.js";
+      import {
+        collection,
+        query,
+        where,
+        getDocs,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
-async function ensureStoreIdInURL() {
-    const userId = localStorage.getItem("userUID");
-    const urlParams = new URLSearchParams(window.location.search);
-    let storeId = urlParams.get("id");
+      async function ensureStoreIdInURL() {
+        const userId = localStorage.getItem("userUID");
+        const urlParams = new URLSearchParams(window.location.search);
+        let storeId = urlParams.get("id");
 
-    if (!userId) {
-        console.warn("❌ No user ID found! Make sure the user is logged in.");
-        return;
-    }
+        if (!userId) {
+          console.warn("❌ No user ID found! Make sure the user is logged in.");
+          return;
+        }
 
-    if (!storeId) {
-        const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userId));
-        const storeSnapshot = await getDocs(storeQuery);
+        if (!storeId) {
+          const storeQuery = query(
+            collection(db, "stores"),
+            where("ownerId", "==", userId)
+          );
+          const storeSnapshot = await getDocs(storeQuery);
 
-        if (!storeSnapshot.empty) {
+          if (!storeSnapshot.empty) {
             storeId = storeSnapshot.docs[0].id;
 
             window.history.replaceState(null, "", `?id=${storeId}`);
-        } else {
+          } else {
             console.warn("❌ No store found for this user!");
             return;
+          }
         }
-    }
 
-    checkStoreOwnership(storeId);
-}
+        checkStoreOwnership(storeId);
+      }
 
-async function checkStoreOwnership(storeId) {
-    const userId = localStorage.getItem("userUID");
-    if (!userId || !storeId) return;
+      async function checkStoreOwnership(storeId) {
+        const userId = localStorage.getItem("userUID");
+        if (!userId || !storeId) return;
 
-    const storeRef = doc(db, "stores", storeId);
-    const storeSnap = await getDoc(storeRef);
+        const storeRef = doc(db, "stores", storeId);
+        const storeSnap = await getDoc(storeRef);
 
-    if (storeSnap.exists() && storeSnap.data().ownerId === userId) {
-        const ordersButton = document.getElementById("received-orders-btn");
-        const historyButton = document.getElementById("order-history-btn");
+        if (storeSnap.exists() && storeSnap.data().ownerId === userId) {
+          const ordersButton = document.getElementById("received-orders-btn");
+          const historyButton = document.getElementById("order-history-btn");
 
-        ordersButton.classList.remove("hidden");
-        historyButton.classList.remove("hidden");
+          ordersButton.classList.remove("hidden");
+          historyButton.classList.remove("hidden");
 
-        ordersButton.addEventListener("click", () => {
+          ordersButton.addEventListener("click", () => {
             window.location.href = `receivedOrders.html?storeId=${storeId}`;
-        });
+          });
 
-        historyButton.addEventListener("click", () => {
+          historyButton.addEventListener("click", () => {
             window.location.href = `orderHistory.html?storeId=${storeId}`;
-        });
-    }
-}
+          });
+        }
+      }
 
-
-document.addEventListener("DOMContentLoaded", ensureStoreIdInURL);
-
+      document.addEventListener("DOMContentLoaded", ensureStoreIdInURL);
     </script>
-</body>
+  </body>
 </html>

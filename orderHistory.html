@@ -1,69 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order History</title>
-    <link rel="stylesheet" href="src/styles.css">
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
     <div class="w-4/5 max-w-3xl bg-white p-6 shadow-lg rounded-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Order History</h1>
-        <div id="orders-container" class="space-y-6"></div>
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Order History</h1>
+      <div id="orders-container" class="space-y-6"></div>
     </div>
 
     <script type="module">
-        import { db } from "./js/firebaseConfig.js";
-        import { collection, query, where, getDocs, doc, getDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+      import { db } from "./js/firebaseConfig.js";
+      import {
+        collection,
+        query,
+        where,
+        getDocs,
+        doc,
+        getDoc,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
-        async function loadOrderHistory() {
-            const userId = localStorage.getItem("userUID");
-            if (!userId) return;
+      async function loadOrderHistory() {
+        const userId = localStorage.getItem("userUID");
+        if (!userId) return;
 
-            const storeQuery = query(collection(db, "stores"), where("ownerId", "==", userId));
-            const storeSnapshot = await getDocs(storeQuery);
-            if (storeSnapshot.empty) return;
+        const storeQuery = query(
+          collection(db, "stores"),
+          where("ownerId", "==", userId)
+        );
+        const storeSnapshot = await getDocs(storeQuery);
+        if (storeSnapshot.empty) return;
 
-            const storeId = storeSnapshot.docs[0].id;
-            const ordersQuery = query(
-                collection(db, "stores", storeId, "orderHistory"),
-                orderBy("timestamp", "desc")
-            );
-            const ordersSnapshot = await getDocs(ordersQuery);
+        const storeId = storeSnapshot.docs[0].id;
+        const ordersQuery = query(
+          collection(db, "stores", storeId, "orderHistory"),
+          orderBy("timestamp", "desc")
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
 
-            const ordersContainer = document.getElementById("orders-container");
-            ordersContainer.innerHTML = "";
+        const ordersContainer = document.getElementById("orders-container");
+        ordersContainer.innerHTML = "";
 
-            if (ordersSnapshot.empty) {
-                ordersContainer.innerHTML = "<p class='text-gray-500'>No completed orders yet.</p>";
-                return;
-            }
+        if (ordersSnapshot.empty) {
+          ordersContainer.innerHTML =
+            "<p class='text-gray-500'>No completed orders yet.</p>";
+          return;
+        }
 
-            for (const orderDoc of ordersSnapshot.docs) {
-                const order = orderDoc.data();
-                const customer = {
-                    email: order.email || "Unknown",
-                    businessName: order.businessName || "N/A"
-                };
+        for (const orderDoc of ordersSnapshot.docs) {
+          const order = orderDoc.data();
+          const customer = {
+            email: order.email || "Unknown",
+            businessName: order.businessName || "N/A",
+          };
 
-                const orderElement = document.createElement("div");
-                orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+          const orderElement = document.createElement("div");
+          orderElement.classList.add(
+            "border",
+            "p-4",
+            "rounded",
+            "shadow-sm",
+            "bg-gray-50"
+          );
 
-                orderElement.innerHTML = `
-                    <p class="text-sm text-gray-600"><strong>Customer:</strong> ${customer.businessName} (${customer.email})</p>
-                    <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${orderDoc.id}</p>
-                    <p class="text-sm text-gray-600"><strong>Total:</strong> ${order.total.toFixed(2)}лв.</p>
-                    <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${new Date(order.timestamp.seconds * 1000).toLocaleString()}</p>
+          orderElement.innerHTML = `
+                    <p class="text-sm text-gray-600"><strong>Customer:</strong> ${
+                      customer.businessName
+                    } (${customer.email})</p>
+                    <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${
+                      orderDoc.id
+                    }</p>
+                    <p class="text-sm text-gray-600"><strong>Total:</strong> ${order.total.toFixed(
+                      2
+                    )}лв.</p>
+                    <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${new Date(
+                      order.timestamp.seconds * 1000
+                    ).toLocaleString()}</p>
                     <ul class="mt-2 list-disc list-inside">
-                        ${order.items.map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`).join("")}
+                        ${order.items
+                          .map(
+                            (item) =>
+                              `<li class="text-sm">${item.quantity}x ${
+                                item.name
+                              } - ${item.price.toFixed(2)}лв.</li>`
+                          )
+                          .join("")}
                     </ul>
                 `;
 
-                ordersContainer.appendChild(orderElement);
-            }
+          ordersContainer.appendChild(orderElement);
         }
+      }
 
-        document.addEventListener("DOMContentLoaded", loadOrderHistory);
+      document.addEventListener("DOMContentLoaded", loadOrderHistory);
     </script>
-</body>
+  </body>
 </html>

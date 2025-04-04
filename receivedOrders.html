@@ -1,136 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Received Orders</title>
-    <link rel="stylesheet" href="src/styles.css">
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen flex flex-col items-center py-6">
     <div class="w-4/5 max-w-3xl bg-white p-6 shadow-lg rounded-lg">
-        <h1 class="text-2xl font-bold text-gray-800 mb-4">Received Orders</h1>
-        <div id="orders-container" class="space-y-6">
-        </div>
+      <h1 class="text-2xl font-bold text-gray-800 mb-4">Received Orders</h1>
+      <div id="orders-container" class="space-y-6"></div>
     </div>
 
     <script type="module">
-        import { db, auth } from "./js/firebaseConfig.js";
-        import {collection, query, getDocs, doc, getDoc, deleteDoc,setDoc, orderBy} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-        
-        async function loadReceivedOrders(storeId) {
+      import { db, auth } from "./js/firebaseConfig.js";
+      import {
+        collection,
+        query,
+        getDocs,
+        doc,
+        getDoc,
+        deleteDoc,
+        setDoc,
+        orderBy,
+      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+      import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-  try {
-    const ordersQuery = query(
-      collection(db, "stores", storeId, "receivedOrders"),
-      orderBy("timestamp", "desc")
-    );
+      async function loadReceivedOrders(storeId) {
+        try {
+          const ordersQuery = query(
+            collection(db, "stores", storeId, "receivedOrders"),
+            orderBy("timestamp", "desc")
+          );
 
-    const ordersSnapshot = await getDocs(ordersQuery);
+          const ordersSnapshot = await getDocs(ordersQuery);
 
-    const ordersContainer = document.getElementById("orders-container");
-    ordersContainer.innerHTML = "";
+          const ordersContainer = document.getElementById("orders-container");
+          ordersContainer.innerHTML = "";
 
-    if (ordersSnapshot.empty) {
-      ordersContainer.innerHTML = "<p class='text-gray-500'>No received orders yet.</p>";
-      return;
-    }
+          if (ordersSnapshot.empty) {
+            ordersContainer.innerHTML =
+              "<p class='text-gray-500'>No received orders yet.</p>";
+            return;
+          }
 
-    for (const orderDoc of ordersSnapshot.docs) {
-      try {
-        const order = orderDoc.data();
+          for (const orderDoc of ordersSnapshot.docs) {
+            try {
+              const order = orderDoc.data();
 
-        const total = typeof order.total === "number" ? order.total : 0;
-        const timestamp = order.timestamp?.seconds
-          ? new Date(order.timestamp.seconds * 1000).toLocaleString()
-          : "Unknown";
-        const items = Array.isArray(order.items) ? order.items : [];
+              const total = typeof order.total === "number" ? order.total : 0;
+              const timestamp = order.timestamp?.seconds
+                ? new Date(order.timestamp.seconds * 1000).toLocaleString()
+                : "Unknown";
+              const items = Array.isArray(order.items) ? order.items : [];
 
-        const customer = {
-          email: order.email || "Unknown",
-          businessName: order.businessName || "N/A"
-        };
+              const customer = {
+                email: order.email || "Unknown",
+                businessName: order.businessName || "N/A",
+              };
 
-        const orderElement = document.createElement("div");
-        orderElement.classList.add("border", "p-4", "rounded", "shadow-sm", "bg-gray-50");
+              const orderElement = document.createElement("div");
+              orderElement.classList.add(
+                "border",
+                "p-4",
+                "rounded",
+                "shadow-sm",
+                "bg-gray-50"
+              );
 
-        orderElement.innerHTML = `
-          <p class="text-sm text-gray-600"><strong>Customer:</strong> ${customer.businessName} (${customer.email})</p>
-          <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${orderDoc.id}</p>
-          <p class="text-sm text-gray-600"><strong>Total:</strong> ${total.toFixed(2)}лв.</p>
+              orderElement.innerHTML = `
+          <p class="text-sm text-gray-600"><strong>Customer:</strong> ${
+            customer.businessName
+          } (${customer.email})</p>
+          <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${
+            orderDoc.id
+          }</p>
+          <p class="text-sm text-gray-600"><strong>Total:</strong> ${total.toFixed(
+            2
+          )}лв.</p>
           <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${timestamp}</p>
-          <p class="text-sm text-gray-600"><strong>Status:</strong> ${order.status || "Pending"}</p>
+          <p class="text-sm text-gray-600"><strong>Status:</strong> ${
+            order.status || "Pending"
+          }</p>
           <ul class="mt-2 list-disc list-inside">
             ${items
               .map(
                 (item) =>
-                  `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}лв.</li>`
+                  `<li class="text-sm">${item.quantity}x ${
+                    item.name
+                  } - ${item.price.toFixed(2)}лв.</li>`
               )
               .join("")}
           </ul>
-          <button class="complete-order-btn bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-600" data-order-id="${orderDoc.id}">
+          <button class="complete-order-btn bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-600" data-order-id="${
+            orderDoc.id
+          }">
             Complete Order
           </button>
         `;
 
-        ordersContainer.appendChild(orderElement);
-      } catch (orderError) {
-        console.error(`❌ Error rendering order ${orderDoc.id}:`, orderError);
+              ordersContainer.appendChild(orderElement);
+            } catch (orderError) {
+              console.error(
+                `❌ Error rendering order ${orderDoc.id}:`,
+                orderError
+              );
+            }
+          }
+
+          // Setup complete order buttons
+          document.querySelectorAll(".complete-order-btn").forEach((button) => {
+            button.addEventListener("click", async (event) => {
+              const orderId = event.target.dataset.orderId;
+              await completeOrder(orderId, storeId);
+            });
+          });
+        } catch (error) {
+          console.error("❌ Error loading received orders:", error);
+          document.getElementById(
+            "orders-container"
+          ).innerHTML = `<p class='text-red-500'>Error loading received orders: ${error.message}</p>`;
+        }
       }
-    }
 
-    // Setup complete order buttons
-    document.querySelectorAll(".complete-order-btn").forEach((button) => {
-      button.addEventListener("click", async (event) => {
-        const orderId = event.target.dataset.orderId;
-        await completeOrder(orderId, storeId);
+      async function completeOrder(orderId, storeId) {
+        try {
+          const orderRef = doc(
+            db,
+            "stores",
+            storeId,
+            "receivedOrders",
+            orderId
+          );
+          const orderSnap = await getDoc(orderRef);
+
+          if (!orderSnap.exists()) {
+            console.warn(`⚠️ Order ${orderId} not found in receivedOrders.`);
+            return;
+          }
+
+          const orderData = orderSnap.data();
+          const historyRef = doc(
+            db,
+            "stores",
+            storeId,
+            "orderHistory",
+            orderId
+          );
+
+          await setDoc(historyRef, orderData);
+          await deleteDoc(orderRef);
+
+          await loadReceivedOrders(storeId);
+        } catch (err) {
+          console.error(`❌ Failed to complete order ${orderId}:`, err);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const storeId = localStorage.getItem("userUID");
+
+        if (storeId) {
+          await loadReceivedOrders(storeId);
+        } else {
+          console.warn(
+            "⚠️ No UID found in localStorage. Redirecting to login?"
+          );
+          // Optional: window.location.href = "/login.html";
+          document.getElementById("orders-container").innerHTML =
+            "<p class='text-gray-500'>Please log in to view your received orders.</p>";
+        }
       });
-    });
-
-  } catch (error) {
-    console.error("❌ Error loading received orders:", error);
-    document.getElementById("orders-container").innerHTML =
-      `<p class='text-red-500'>Error loading received orders: ${error.message}</p>`;
-  }
-}
-
-async function completeOrder(orderId, storeId) {
-  try {
-    const orderRef = doc(db, "stores", storeId, "receivedOrders", orderId);
-    const orderSnap = await getDoc(orderRef);
-
-    if (!orderSnap.exists()) {
-      console.warn(`⚠️ Order ${orderId} not found in receivedOrders.`);
-      return;
-    }
-
-    const orderData = orderSnap.data();
-    const historyRef = doc(db, "stores", storeId, "orderHistory", orderId);
-
-    await setDoc(historyRef, orderData);
-    await deleteDoc(orderRef);
-
-    await loadReceivedOrders(storeId);
-  } catch (err) {
-    console.error(`❌ Failed to complete order ${orderId}:`, err);
-  }
-}
-
-      
-        document.addEventListener("DOMContentLoaded", async () => {
-          const storeId = localStorage.getItem("userUID");
-
-  if (storeId) {
-    await loadReceivedOrders(storeId);
-  } else {
-    console.warn("⚠️ No UID found in localStorage. Redirecting to login?");
-    // Optional: window.location.href = "/login.html";
-    document.getElementById("orders-container").innerHTML =
-      "<p class='text-gray-500'>Please log in to view your received orders.</p>";
-  }
-});
-      </script>
-      
-</body>
+    </script>
+  </body>
 </html>

@@ -134,7 +134,6 @@ async function checkout() {
     const userSnap = await getDoc(userDocRef);
     const userData = userSnap.exists() ? userSnap.data() : {};
     const businessName = userData.businessName?.trim();
-    console.log(businessName);
 
     const total = localCartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -165,7 +164,7 @@ async function checkout() {
     document.getElementById("cart-total").textContent = "0.00лв.";
 
     alert("✅ Checkout successful! Your order has been placed.");
-    // window.location.href = "orders.html";
+    window.location.href = "orders.html";
   } catch (error) {
     console.error("❌ Error processing checkout:", error);
     alert("⚠️ Error placing order. Please try again.");

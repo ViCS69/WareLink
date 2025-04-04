@@ -109,7 +109,6 @@
             }
           }
 
-          // Setup complete order buttons
           document.querySelectorAll(".complete-order-btn").forEach((button) => {
             button.addEventListener("click", async (event) => {
               const orderId = event.target.dataset.orderId;
@@ -167,7 +166,6 @@
           console.warn(
             "⚠️ No UID found in localStorage. Redirecting to login?"
           );
-          // Optional: window.location.href = "/login.html";
           document.getElementById("orders-container").innerHTML =
             "<p class='text-gray-500'>Please log in to view your received orders.</p>";
         }

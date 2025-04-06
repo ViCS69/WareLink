@@ -57,41 +57,34 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <div id="store-actions">
+              <button
+                id="received-orders-btn"
+                class="text-center text-md py-2 mr-2 hover:text-blue-500"
+              >
+                 Received orders 
+              </button>
+              <button
+                id="order-history-btn"
+                class="text-center text-md py-2 hover:text-blue-500"
+              >
+                Order history 
+              </button>
+            </div>
+
             <button
               id="addItemBtn"
-              class="add-item-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              class="add-item-btn bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600"
             >
               + Add Item
             </button>
 
-            <div id="store-actions">
-              <button
-                id="received-orders-btn"
-                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
-              >
-                View Received Orders
-              </button>
-              <button
-                id="order-history-btn"
-                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
-              >
-                Order History
-              </button>
-            </div>
-
-            <div id="store-actions">
-              <button
-                id="received-orders-btn"
-                class="bg-blue-500 text-white px-4 py-2 rounded hidden"
-              >
-                View Received Orders
-              </button>
-            </div>
+            
 
             <div class="relative group">
-              <button class="bg-gray-800 text-white px-4 py-2 rounded">
-                Menu
+              <button class=" text-sm bg-gray-500 text-white px-4 py-2 rounded">
+                ☰
               </button>
               <div
                 id="category-menu"
@@ -100,7 +93,7 @@
                 <div id="categories-list"></div>
                 <button
                   id="add-category-btn"
-                  class="block w-full text-left px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white"
+                  class="block w-full text-left px-4 py-2 bg-green-500 hover:bg-green-600 text-white"
                 >
                   + Добави категория
                 </button>

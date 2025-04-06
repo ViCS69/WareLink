@@ -470,15 +470,15 @@ function displayProduct(product) {
   itemsContainer.appendChild(itemDiv);
 
   const addToCartBtn = document.createElement("button");
-  addToCartBtn.textContent = "🛒 Add to Cart";
+  addToCartBtn.textContent = "Add to Cart";
   addToCartBtn.classList.add(
     "mt-auto",
-    "bg-blue-500",
+    "bg-green-500",
     "text-white",
     "px-3",
     "py-1",
-    "rounded",
-    "hover:bg-blue-600",
+    "rounded-lg",
+    "hover:bg-green-600",
     "transition-colors"
   );
 

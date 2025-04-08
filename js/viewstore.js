@@ -5,7 +5,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 import { loadCategories } from "./categoryManager.js";
 import { loadProducts } from "./productManager.js";
-import { setCurrentStore, checkout } from "./cartManager.js";
+import { setCurrentStore, checkout, loadCartForCurrentStore } from "./cartManager.js";
 
 const params = new URLSearchParams(window.location.search);
 const storeId = params.get("id");
@@ -39,6 +39,7 @@ async function loadStore() {
 document.addEventListener("DOMContentLoaded", async () => {
   if (storeId) {
     setCurrentStore(storeId);
+    loadCartForCurrentStore();
   }
 
   await loadStore();

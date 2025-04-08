@@ -21,7 +21,7 @@ import {
   handleLogoUpload,
   loadStoreName,
 } from "./logoManager.js";
-
+import {cleanProductName} from "./productManager.js"
 window.addEventListener("unhandledrejection", (event) => {
   if (event.reason?.message?.includes("ERR_BLOCKED_BY_CLIENT")) {
     event.preventDefault();
@@ -43,9 +43,54 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
+async function checkIfProductExists(cleanedName) {
+  const userUID = localStorage.getItem("userUID");
+  const storeId = userUID;
+
+  const q = query(
+    collection(db, "products"),
+    where("storeId", "==", storeId),
+    where("nameCleaned", "==", cleanedName)
+  );
+
+  const snapshot = await getDocs(q);
+  return !snapshot.empty;
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   initializeEventListeners();
   loadStoreLogo();
+  let debounceTimer;
+const nameInput = document.getElementById("nameInput");
+const nameStatus = document.getElementById("nameStatus");
+const newProductFields = document.getElementById("newProductFields");
+
+nameInput.addEventListener("input", (e) => {
+  const value = e.target.value.trim();
+
+  clearTimeout(debounceTimer);
+
+  if (value === "") {
+    nameStatus.textContent = "";
+    newProductFields.classList.add("hidden");
+    return;
+  }
+
+  nameStatus.textContent = "Checking...";
+  
+  debounceTimer = setTimeout(async () => {
+    const cleanedName = cleanProductName(value); 
+    const exists = await checkIfProductExists(cleanedName); 
+    
+    if (exists) {
+      nameStatus.textContent = "Product exists in your warehouse.";
+      newProductFields.classList.add("hidden");
+    } else {
+      nameStatus.textContent = "New product. Please enter additional info.";
+      newProductFields.classList.remove("hidden");
+    }
+  }, 1000);
+});
 
   const userUID = auth.currentUser?.uid;
   if (userUID) {

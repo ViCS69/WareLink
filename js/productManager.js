@@ -43,6 +43,34 @@ async function addProduct(name, price) {
 
     const cleanedName = cleanProductName(name);
     const unit = parseUnitFromName(name);
+
+    const productQuery = query(
+      collection(db, "products"),
+      where("storeId", "==", storeId),
+      where("nameCleaned", "==", cleanedName)
+    );
+
+    const snapshot = await getDocs(productQuery);
+
+    if (!snapshot.empty) {
+      const existingDoc = snapshot.docs[0];
+      const docRef = doc(db, "products", existingDoc.id);
+      const existing = existingDoc.data();
+
+      await updateDoc(docRef, {
+        quantity: existing.quantity,
+        price: cleanPriceInput(price),
+        imageUrl,
+        category,
+        unitType: unit?.unitType || null,
+        unitValue: unit?.unitValue || null,
+        updatedAt: serverTimestamp(),
+      });
+
+      await loadProducts(null, storeId);
+      return;
+    }
+
     const productData = {
       storeId,
       category,
@@ -56,16 +84,36 @@ async function addProduct(name, price) {
       createdAt: serverTimestamp(),
     };
 
-    productData.position = await getNextProductPosition(storeId);
-
     await addDoc(collection(db, "products"), productData);
-
     await loadProducts(null, productData.storeId);
   } catch (error) {
     console.error("Error adding product:", error);
     throw error;
   }
 }
+
+async function updateProductInDatabase(product) {
+  if (!product?.id) {
+    console.error("updateProductInDatabase → product.id is missing");
+    return;
+  }
+
+  const productRef = doc(db, "products", product.id);
+
+  try {
+    await updateDoc(productRef, {
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      category: product.category,
+      quantity: product.quantity,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+  }
+}
+
 
 function cleanPriceInput(input) {
   const sanitized = String(input)
@@ -119,19 +167,6 @@ function parseUnitFromName(name) {
   }
 
   return null;
-}
-async function getNextProductPosition(storeId) {
-  const productsQuery = query(
-    collection(db, "products"),
-    where("storeId", "==", storeId),
-    orderBy("position", "desc")
-  );
-  const productsSnapshot = await getDocs(productsQuery);
-  if (productsSnapshot.empty) {
-    return 1;
-  }
-  const highestPosition = productsSnapshot.docs[0].data().position;
-  return highestPosition + 1;
 }
 
 async function getStoreId(userUID) {
@@ -223,7 +258,7 @@ async function loadProducts(category = null, storeId = null) {
     let productQuery = query(
       collection(db, "products"),
       where("storeId", "==", queryStoreId),
-      orderBy("position", "asc")
+      orderBy("name", "asc")
     );
     if (category) {
       productQuery = query(productQuery, where("category", "==", category));
@@ -249,59 +284,49 @@ async function loadProducts(category = null, storeId = null) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  initializeEventListeners();
+const editProductModal = document.getElementById("editProductModal");
+const editName = document.getElementById("editName");
+const editPrice = document.getElementById("editPrice");
+const editQuantity = document.getElementById("editQuantity");
+const editCategory = document.getElementById("editCategory");
+const editImageUrl = document.getElementById("editImageUrl");
+
+let currentProductBeingEdited = null;
+
+async function openEditModal(product) {
+  currentProductBeingEdited = product;
+
+  editName.value = product.name;
+  editPrice.value = product.price;
+  editQuantity.value = 0;
+  editImageUrl.value = product.imageUrl || "";
+
+  await populateCategoryDropdown(document.getElementById("editCategory"));
+  editCategory.value = product.category || "";
+
+  editProductModal.classList.remove("hidden");
+}
+
+document.getElementById("cancelEdit").addEventListener("click", () => {
+  editProductModal.classList.add("hidden");
 });
 
-function initializeEventListeners() {
-  const closeCategoryModal = document.getElementById("closeCategoryModal");
-  const saveCategoryBtn = document.getElementById("saveCategoryBtn");
-  const stopMovingModeBtn = document.getElementById("stopMovingModeBtn");
+document.getElementById("saveEdit").addEventListener("click", async () => {
+  const updatedProduct = {
+    ...currentProductBeingEdited,
+    name: editName.value.trim(),
+    price: parseFloat(editPrice.value),
+    imageUrl: editImageUrl.value.trim(),
+    category: editCategory.value,
+    quantity: currentProductBeingEdited.quantity + parseInt(editQuantity.value || 0),
+  };
 
-  if (closeCategoryModal) {
-    closeCategoryModal.addEventListener("click", () => {
-      document.getElementById("categoryModal").classList.add("hidden");
-    });
-  }
+  await updateProductInDatabase(updatedProduct); 
 
-  if (saveCategoryBtn) {
-    saveCategoryBtn.addEventListener("click", async (event) => {
-      event.preventDefault();
+  editProductModal.classList.add("hidden");
+  location.reload(); 
+});
 
-      const categoryModal = document.getElementById("categoryModal");
-      const categorySelectDropdown = document.getElementById(
-        "categorySelectDropdown"
-      );
-      const selectedCategory = categorySelectDropdown?.value;
-      const productId = categoryModal?.dataset?.productId;
-
-      if (!selectedCategory || !productId) {
-        console.error("❌ No category selected or product ID missing.");
-        alert("Моля, изберете категория.");
-        return;
-      }
-
-      try {
-        await changeProductCategory(productId, selectedCategory);
-
-        categoryModal.classList.add("hidden");
-
-        await loadProducts();
-
-        alert(`Категорията е променена на "${selectedCategory}"`);
-      } catch (error) {
-        console.error("❌ Error changing category:", error);
-        alert("Грешка при промяна на категорията.");
-      }
-    });
-  }
-
-  if (stopMovingModeBtn) {
-    stopMovingModeBtn.addEventListener("click", () => {
-      toggleMovingMode(false);
-    });
-  }
-}
 
 function displayProduct(product) {
   const itemsContainer = document.getElementById("itemsContainer");
@@ -327,7 +352,6 @@ function displayProduct(product) {
     "transition-transform",
     "duration-300"
   );
-  itemDiv.draggable = true;
   itemDiv.dataset.productId = product.id;
 
   const imageContainer = document.createElement("div");
@@ -388,31 +412,19 @@ function displayProduct(product) {
     );
     deleteOption.textContent = "🗑 Delete product";
 
-    const changeCategoryOption = document.createElement("a");
-    changeCategoryOption.href = "#";
-    changeCategoryOption.classList.add(
+    const editOption = document.createElement("a");
+    editOption.href = "#";
+    editOption.classList.add(
       "block",
       "px-4",
       "py-2",
       "text-gray-800",
       "hover:bg-gray-200"
     );
-    changeCategoryOption.textContent = "✎ Change category";
-
-    const changeProductPlace = document.createElement("a");
-    changeProductPlace.href = "#";
-    changeProductPlace.classList.add(
-      "block",
-      "px-4",
-      "py-2",
-      "text-gray-800",
-      "hover:bg-gray-200"
-    );
-    changeProductPlace.textContent = "Change Product Place";
+    editOption.textContent = "✎ Edit item";
 
     dropdownMenu.appendChild(deleteOption);
-    dropdownMenu.appendChild(changeCategoryOption);
-    dropdownMenu.appendChild(changeProductPlace);
+    dropdownMenu.appendChild(editOption);
 
     settingsMenu.appendChild(threeDotsIcon);
     settingsMenu.appendChild(dropdownMenu);
@@ -420,11 +432,9 @@ function displayProduct(product) {
 
     function toggleDropdown() {
       const isVisible = dropdownMenu.style.display === "block";
-
       document.querySelectorAll(".dropdown-menu").forEach((menu) => {
         menu.style.display = "none";
       });
-
       dropdownMenu.style.display = isVisible ? "none" : "block";
     }
 
@@ -445,23 +455,9 @@ function displayProduct(product) {
       itemDiv.remove();
     });
 
-    changeCategoryOption.addEventListener("click", async (event) => {
+    editOption.addEventListener("click", (event) => {
       event.preventDefault();
-
-      const categoryModal = document.getElementById("categoryModal");
-
-      categoryModal.dataset.productId = product.id;
-
-      document.getElementById("categoryModalTitle").textContent =
-        "Промяна на категорията";
-
-      await populateCategoryDropdown();
-      categoryModal.classList.remove("hidden");
-    });
-
-    changeProductPlace.addEventListener("click", (event) => {
-      event.preventDefault();
-      toggleMovingMode(true, changeProductPlace);
+      openEditModal(product);
     });
   }
 
@@ -492,111 +488,4 @@ function displayProduct(product) {
   itemsContainer.appendChild(itemDiv);
 }
 
-function addDragAndDropListeners(itemDiv) {
-  itemDiv.setAttribute("draggable", true);
-  itemDiv.addEventListener("dragstart", handleDragStart);
-  itemDiv.addEventListener("dragover", handleDragOver);
-  itemDiv.addEventListener("drop", handleDrop);
-  itemDiv.addEventListener("dragend", handleDragEnd);
-}
-
-function removeDragAndDropListeners(itemDiv) {
-  itemDiv.removeAttribute("draggable");
-  itemDiv.removeEventListener("dragstart", handleDragStart);
-  itemDiv.removeEventListener("dragover", handleDragOver);
-  itemDiv.removeEventListener("drop", handleDrop);
-  itemDiv.removeEventListener("dragend", handleDragEnd);
-}
-
-function handleDragStart(event) {
-  event.dataTransfer.setData("text/plain", event.target.dataset.productId);
-  event.target.classList.add("opacity-50");
-}
-
-function handleDragOver(event) {
-  event.preventDefault();
-  const target = event.target.closest("[draggable]");
-  if (target && !target.classList.contains("opacity-50")) {
-    target.classList.add("border-2", "border-dashed", "border-gray-500");
-  }
-}
-
-function handleDrop(event) {
-  event.preventDefault();
-  const productId = event.dataTransfer.getData("text/plain");
-  const target = event.target.closest("[draggable]");
-  if (target) {
-    target.classList.remove("border-2", "border-dashed", "border-gray-500");
-    moveProduct(productId, target.dataset.productId);
-  }
-}
-
-function handleDragEnd(event) {
-  event.target.classList.remove("opacity-50");
-}
-
-async function moveProduct(draggedProductId, targetProductId) {
-  const itemsContainer = document.getElementById("itemsContainer");
-  const draggedProduct = itemsContainer.querySelector(
-    `[data-product-id="${draggedProductId}"]`
-  );
-  const targetProduct = itemsContainer.querySelector(
-    `[data-product-id="${targetProductId}"]`
-  );
-  if (draggedProduct && targetProduct) {
-    const nextSibling = targetProduct.nextElementSibling;
-    itemsContainer.insertBefore(draggedProduct, nextSibling);
-
-    debouncedUpdateProductPositions();
-  }
-}
-
-const debouncedUpdateProductPositions = debounce(async () => {
-  const itemsContainer = document.getElementById("itemsContainer");
-  const productElements = itemsContainer.querySelectorAll(".product-item");
-  const batch = writeBatch(db);
-  productElements.forEach((productElement, index) => {
-    const productId = productElement.dataset.productId;
-    const productRef = doc(db, "products", productId);
-    batch.update(productRef, { position: index + 1 });
-  });
-  await batch.commit();
-}, 300);
-
-function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      func.apply(this, args);
-    }, wait);
-  };
-}
-
-function toggleMovingMode(isEnabled, button) {
-  const itemsContainer = document.getElementById("itemsContainer");
-  const body = document.body;
-  const stopMovingModeButton = document.getElementById("stopMovingModeBtn");
-
-  if (isEnabled) {
-    itemsContainer.classList.add("moving-mode");
-    if (button) {
-    }
-    body.classList.add("bg-light-blue");
-    stopMovingModeButton.classList.remove("hidden");
-
-    document.querySelectorAll(".product-item").forEach(addDragAndDropListeners);
-  } else {
-    itemsContainer.classList.remove("moving-mode");
-    if (button) {
-    }
-    body.classList.remove("bg-light-blue");
-    stopMovingModeButton.classList.add("hidden");
-
-    document
-      .querySelectorAll(".product-item")
-      .forEach(removeDragAndDropListeners);
-  }
-}
-
-export { addProduct, loadProducts, displayProduct };
+export { addProduct, loadProducts, displayProduct, cleanProductName };

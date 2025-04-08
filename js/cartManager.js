@@ -3,30 +3,40 @@ import {
   collection,
   doc,
   getDoc,
-  addDoc,
   setDoc,
-  deleteDoc,
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
-const userId = auth.currentUser?.uid;
-
 let cartItems = [];
 
+function getCartKey(storeId) {
+  const userId = auth.currentUser?.uid;
+  if (!storeId || !userId) return null;
+  return `cart_${storeId}_${userId}`;
+}
+
 function saveCart(storeId) {
-  if (storeId) {
-    localStorage.setItem(`cart_${storeId}`, JSON.stringify(cartItems));
+  const key = getCartKey(storeId);
+  if (key) {
+    localStorage.setItem(key, JSON.stringify(cartItems));
   }
 }
 
 function setCurrentStore(storeId) {
   localStorage.setItem("currentStoreId", storeId);
+}
+
+function loadCartForCurrentStore() {
+  const storeId = localStorage.getItem("currentStoreId");
+  const userId = auth.currentUser?.uid;
+  if (!storeId || !userId) return;
   loadCart(storeId);
 }
 
 function loadCart(storeId) {
-  if (!storeId) return;
-  cartItems = JSON.parse(localStorage.getItem(`cart_${storeId}`)) || [];
+  const key = getCartKey(storeId);
+  if (!key) return;
+  cartItems = JSON.parse(localStorage.getItem(key)) || [];
   updateCart(storeId);
 }
 
@@ -75,30 +85,23 @@ function updateCart(storeId) {
     );
 
     cartItem.innerHTML = `
-        <div class="flex items-center gap-2">
-            <div class="w-16 h-16 flex items-center justify-center bg-gray-100 border rounded overflow-hidden">
-                <img src="${item.imageUrl}" alt="${
-      item.name
-    }" class="w-full h-full object-contain">
-            </div>
-            <div>
-                <p class="font-medium">${item.name}</p>
-                <p class="text-sm">${item.quantity} x ${item.price.toFixed(
-      2
-    )}лв.</p>
-            </div>
+      <div class="flex items-center gap-2">
+        <div class="w-16 h-16 flex items-center justify-center bg-gray-100 border rounded overflow-hidden">
+          <img src="${item.imageUrl}" alt="${item.name}" class="w-full h-full object-contain">
         </div>
-        <div class="flex flex-col items-end">
-            <p class="font-semibold">${(item.price * item.quantity).toFixed(
-              2
-            )}лв.</p>
-            <button class="text-red-500 text-sm mt-1 hover:underline" data-remove="${
-              item.id
-            }">Remove</button>
+        <div>
+          <p class="font-medium">${item.name}</p>
+          <p class="text-sm">${item.quantity} x ${item.price.toFixed(2)}лв.</p>
         </div>
-`;
+      </div>
+      <div class="flex flex-col items-end">
+        <p class="font-semibold">${(item.price * item.quantity).toFixed(2)}лв.</p>
+        <button class="text-red-500 text-sm mt-1 hover:underline" data-remove="${item.id}">Remove</button>
+      </div>
+    `;
 
     cartContainer.appendChild(cartItem);
+
     const removeBtn = cartItem.querySelector("[data-remove]");
     if (removeBtn) {
       removeBtn.addEventListener("click", () => {
@@ -108,7 +111,6 @@ function updateCart(storeId) {
   });
 
   document.getElementById("cart-total").textContent = `${total.toFixed(2)}лв.`;
-
   saveCart(storeId);
 }
 
@@ -120,9 +122,10 @@ async function checkout() {
     alert("❌ Store or user not set or user not authenticated!");
     return;
   }
+
   const userId = currentUser.uid;
-  const cartKey = `cart_${storeId}`;
-  const localCartItems = JSON.parse(localStorage.getItem(cartKey)) || [];
+  const key = getCartKey(storeId);
+  const localCartItems = key ? JSON.parse(localStorage.getItem(key)) || [] : [];
 
   if (localCartItems.length === 0) {
     alert("❌ Your cart is empty!");
@@ -158,7 +161,7 @@ async function checkout() {
     await setDoc(doc(userOrderRef, orderId), order);
     await setDoc(doc(storeOrderRef, orderId), order);
 
-    localStorage.removeItem(cartKey);
+    if (key) localStorage.removeItem(key);
     cartItems = [];
     document.getElementById("cart-items").innerHTML = "";
     document.getElementById("cart-total").textContent = "0.00лв.";
@@ -181,10 +184,7 @@ function removeFromCart(productId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const storeId = localStorage.getItem("currentStoreId");
-  if (storeId) {
-    loadCart(storeId);
-  }
+  loadCartForCurrentStore();
 });
 
-export { addToCart, setCurrentStore, checkout };
+export { addToCart, setCurrentStore, checkout, loadCartForCurrentStore };

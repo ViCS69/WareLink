@@ -77,44 +77,36 @@ async function getCategoriesForStore(storeId) {
       where("storeId", "==", storeId)
     );
     const categorySnapshot = await getDocs(categoriesQuery);
-    return categorySnapshot.docs.map((doc) => doc.data().name);
+    return categorySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      name: doc.data().name,
+    }));
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];
   }
 }
 
-async function populateCategoryDropdown() {
-  const categorySelectDropdown = document.getElementById(
-    "categorySelectDropdown"
-  );
-  categorySelectDropdown.innerHTML =
-    "<option disabled selected>Изберете категория</option>";
-
+export async function populateCategoryDropdown(targetElement) {
   const userUID = localStorage.getItem("userUID");
-  if (!userUID) {
-    console.error("❌ No user UID found!");
+  const storeId = userUID;
+  const categories = await getCategoriesForStore(storeId);
+
+  if (!targetElement) {
+    console.error("populateCategoryDropdown → target element not found.");
     return;
   }
 
-  try {
-    const storeId = await getStoreId(userUID);
-    const categories = await getCategoriesForStore(storeId);
+  targetElement.innerHTML = "";
 
-    if (categories.length === 0) {
-      console.warn("⚠️ No categories found for this store.");
-    }
-
-    categories.forEach((category) => {
-      const option = document.createElement("option");
-      option.value = category;
-      option.textContent = category;
-      categorySelectDropdown.appendChild(option);
-    });
-  } catch (error) {
-    console.error("❌ Error fetching categories:", error);
-  }
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.name;
+    option.textContent = category.name;
+    targetElement.appendChild(option);
+  });
 }
+
 
 async function addCategory(categoryName) {
   try {
@@ -331,6 +323,5 @@ export {
   deleteCategory,
   changeProductCategory,
   getCategoriesForStore,
-  populateCategoryDropdown,
   getStoreId,
 };

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shop</title>
+    <title>Shop - WareLink</title>
     <link href="/src/styles.css" rel="stylesheet" />
     <link
       rel="stylesheet"
@@ -117,7 +117,33 @@
       </button>
     </main>
 
-    <div
+    <div id="editProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-lg space-y-4 relative">
+        <h2 class="text-xl font-bold mb-4">Редакция на продукт</h2>
+    
+        <label class="block text-sm font-medium">Име</label>
+        <input id="editName" type="text" class="w-full border px-3 py-2 rounded" />
+    
+        <label class="block text-sm font-medium">Цена (лв)</label>
+        <input id="editPrice" type="number" step="0.01" class="w-full border px-3 py-2 rounded" />
+    
+        <label class="block text-sm font-medium">Добави количество</label>
+        <input id="editQuantity" type="number" class="w-full border px-3 py-2 rounded" />
+    
+        <label class="block text-sm font-medium">Категория</label>
+        <select id="editCategory" class="w-full border px-3 py-2 rounded"></select>
+    
+        <label class="block text-sm font-medium">Линк към снимка</label>
+        <input id="editImageUrl" type="text" class="w-full border px-3 py-2 rounded" />
+    
+        <div class="flex justify-end gap-2 mt-4">
+          <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Отказ</button>
+          <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Запази</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div
       id="categoryModal"
       class="fixed inset-0 flex items-center justify-center hidden"
     >
@@ -145,7 +171,7 @@
           </button>
         </form>
       </div>
-    </div>
+    </div> -->
 
     <div
       id="addCategoryModal"
@@ -178,74 +204,58 @@
       </div>
     </div>
 
-    <div
-      id="uploadModal"
-      class="fixed inset-0 items-center justify-center hidden"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-80">
-        <span class="text-xl cursor-pointer float-right" id="closeUploadModal"
-          >&times;</span
-        >
+    <div id="uploadModal" class="fixed inset-0 flex items-center justify-center hidden">
+      <div class="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
+        <button id="closeUploadModal" class="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-red-600">&times;</button>
         <h2 class="text-lg font-semibold mb-4">Upload Item</h2>
         <form id="productForm" class="space-y-4">
-          <ul class="space-y-4">
-            <li>
-              <label class="block font-medium">Enter Name:</label>
-              <input
-                type="text"
-                id="nameInput"
-                class="w-full border rounded p-2"
-                required
-              />
-            </li>
-            <li>
-              <label class="block font-medium">Enter Price:</label>
-              <input
-                type="text"
-                pattern="\d+(\.\d{1,2})?"
-                title="Enter a valid price"
-                id="priceInput"
-                class="w-full border rounded p-2"
-                required
-              />
-            </li>
-            <li>
-              <label class="block font-medium">Select Category:</label>
-              <select
-                id="categorySelect"
-                class="w-full border rounded p-2"
-                required
-              >
-                <option disabled selected>Loading categories...</option>
-              </select>
-            </li>
-            <li>
-              <label class="block font-medium">Изображение на продукта:</label>
-              <input
-                type="file"
-                id="productImage"
-                accept="image/*"
-                class="w-full border rounded p-2"
-                required
-              />
-            </li>
-            <li>
-              <button
-                type="submit"
-                id="submitBtn"
-                class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
-              >
-                Submit
-              </button>
-            </li>
-          </ul>
+          <div>
+            <label for="nameInput" class="block font-medium">Product Name</label>
+            <input type="text" id="nameInput" class="w-full border rounded p-2" required />
+            <small id="nameStatus" class="text-sm text-gray-500"></small>
+          </div>
+    
+          <div id="newProductFields" class="space-y-4 hidden">
+            <div>
+              <label for="priceInput" class="block font-medium">Selling Price</label>
+              <input type="text" id="priceInput" class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label for="buyPriceInput" class="block font-medium">Buy Price</label>
+              <input type="text" id="buyPriceInput" class="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label for="marginInput" class="block font-medium">Margin (e.g. 0.3)</label>
+              <input type="text" id="marginInput" class="w-full border rounded p-2" value="0.3" />
+            </div>
+            <div>
+              <label for="quantityInput" class="block font-medium">Initial Quantity</label>
+              <input type="number" id="quantityInput" class="w-full border rounded p-2" />
+            </div>
+          </div>
+    
+          <div>
+            <label for="categorySelect" class="block font-medium">Category</label>
+            <select id="categorySelect" class="w-full border rounded p-2" required>
+              <option disabled selected>Loading categories...</option>
+            </select>
+          </div>
+    
+          <div>
+            <label for="productImage" class="block font-medium">Product Image</label>
+            <input type="file" id="productImage" accept="image/*" class="w-full border rounded p-2" required />
+          </div>
+    
+          <button id="submitBtn" type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600">
+            Submit
+          </button>
         </form>
       </div>
     </div>
+    
 
     <script type="module" src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.17/browser-image-compression.js"></script>
-    <!--Библиотека за компресиране на снимките-->
     <script type="module">
       import { db } from "./js/firebaseConfig.js";
       import {

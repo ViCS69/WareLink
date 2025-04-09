@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 async function handleLogin(e) {
   e.preventDefault();
+  const loginBtn = document.getElementById("login-btn");
+  loginBtn.disabled = true;
+  const spinner = document.getElementById("login-spinner");
+  const loginText = document.getElementById("login-text");
+
+  spinner.classList.remove("hidden");
+  loginText.textContent = "Влизане...";
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value.trim();
 
@@ -21,6 +28,10 @@ async function handleLogin(e) {
     window.location.href = "loggedIn.html";
   } catch (error) {
     console.error("Login error:", error);
+    
+    spinner.classList.add("hidden");
+    loginText.textContent = "Вход";
+    loginBtn.disabled = false;
 
     if (error.code === "auth/user-not-found") {
       showError("Невалиден имейл или потребителят не съществува.");

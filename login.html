@@ -38,9 +38,13 @@
               <button
                 type="submit"
                 id="login-btn"
-                class="w-full text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200"
+                class="w-full text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200 flex items-center justify-center gap-2"
               >
-                Вход
+                <span
+                  id="login-spinner"
+                  class="hidden animate-spin w-6 h-6 border-2 border-solid border-white border-t-transparent rounded-full"
+                ></span>
+                <span id="login-text">Вход</span>
               </button>
             </form>
           </div>

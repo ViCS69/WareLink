@@ -166,7 +166,6 @@ async function checkout() {
     document.getElementById("cart-items").innerHTML = "";
     document.getElementById("cart-total").textContent = "0.00лв.";
 
-    alert("✅ Checkout successful! Your order has been placed.");
     window.location.href = "orders.html";
   } catch (error) {
     console.error("❌ Error processing checkout:", error);

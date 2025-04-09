@@ -4,21 +4,140 @@ import { db } from "./firebaseConfig.js";
 import {
   collection,
   doc,
-  getDocs,
   getDoc,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  startAt,
+  endAt,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 import { loadUserSettings, saveUserSettings } from "./settings.js";
 import { upgradeToPremium } from "./subscriptions.js";
+
+let storeList, noResults;
+let userDoc = null;
+let storeDoc = null;
+
+function updateStoreList(filteredStores) {
+  storeList.innerHTML = "";
+
+  if (filteredStores.length === 0) {
+    noResults.style.display = "block";
+    return;
+  } else {
+    noResults.style.display = "none";
+  }
+
+  filteredStores.slice(0, 7).forEach((store) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="viewstore.html?id=${store.storeId}">${store.storeName}</a>`;
+    storeList.appendChild(li);
+  });
+}
+
+function updateSubscriptionUI() {
+  if (!userDoc) return;
+
+  const currentPlan = userDoc.subscription;
+
+  document.querySelectorAll(".subscription-btn").forEach((button) => {
+    const plan = button.getAttribute("data-plan");
+
+    if (plan === currentPlan) {
+      button.textContent = "Сегашен план";
+      button.disabled = true;
+      button.classList.add("bg-gray-400", "text-gray-200", "cursor-not-allowed");
+      button.classList.remove("bg-blue-600", "hover:bg-blue-700");
+    } else if (currentPlan) {
+      button.textContent = "Промени план";
+      button.disabled = false;
+      button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
+      button.classList.remove("bg-gray-400", "text-gray-200", "cursor-not-allowed");
+    } else {
+      button.textContent = "Започни";
+      button.disabled = false;
+      button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
+      button.classList.remove("bg-gray-400", "text-gray-200", "cursor-not-allowed");
+    }
+  });
+}
+
+function checkUserSubscription() {
+  const storeButton = document.getElementById("proceed-btn");
+  if (userDoc?.subscription && storeDoc) {
+    storeButton.classList.remove("pointer-events-none", "opacity-50");
+    storeButton.href = "store.html";
+  }
+}
+
+async function searchStoresByName(term) {
+  try {
+    const storesRef = collection(db, "stores");
+    const searchQuery = query(
+      storesRef,
+      orderBy("storeName"),
+      startAt(term),
+      endAt(term + "\uf8ff"),
+    );
+
+    const snapshot = await getDocs(searchQuery);
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        storeId: doc.id,
+        storeName: data.storeName ?? "Unknown Store",
+        ownerId: data.ownerId ?? "Unknown Owner",
+      };
+    });
+  } catch (err) {
+    console.error("❌ Error searching stores:", err);
+    return [];
+  }
+}
+
+export function openStoreNameModal() {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("storeNameModal");
+    const input = document.getElementById("storeNameInput");
+    const confirmBtn = document.getElementById("confirmStoreNameBtn");
+    const cancelBtn = document.getElementById("cancelStoreNameBtn");
+
+    modal.classList.remove("hidden");
+    input.value = "";
+    input.focus();
+
+    function cleanup() {
+      modal.classList.add("hidden");
+      confirmBtn.removeEventListener("click", onConfirm);
+      cancelBtn.removeEventListener("click", onCancel);
+    }
+
+    function onConfirm() {
+      const value = input.value.trim();
+      cleanup();
+      resolve(value || null);
+    }
+
+    function onCancel() {
+      cleanup();
+      resolve(null);
+    }
+
+    confirmBtn.addEventListener("click", onConfirm);
+    cancelBtn.addEventListener("click", onCancel);
+  });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   const userEmailElement = document.getElementById("user-email");
   const logoutLink = document.getElementById("logout-link");
   const settingsBtn = document.getElementById("settings-btn");
-  const storeList = document.getElementById("storeList");
+  storeList = document.getElementById("storeList");
+  noResults = document.getElementById("noResults");
   const searchInput = document.getElementById("searchStore");
-  const noResults = document.getElementById("noResults");
 
-  let allStores = [];
+  let searchTimeout;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -31,11 +150,15 @@ document.addEventListener("DOMContentLoaded", function () {
     settingsBtn.classList.remove("hidden");
     logoutLink.classList.remove("hidden");
 
-    searchInput.value = "";
-    allStores = await fetchStores();
-    updateStoreList(allStores);
+    const userRef = doc(db, "users", user.uid);
+    const storeRef = doc(db, "stores", user.uid);
+    const [userSnap, storeSnap] = await Promise.all([getDoc(userRef), getDoc(storeRef)]);
 
-    await updateSubscriptionUI(user.uid);
+    userDoc = userSnap.exists() ? userSnap.data() : null;
+    storeDoc = storeSnap.exists() ? storeSnap.data() : null;
+
+    updateSubscriptionUI();
+    checkUserSubscription();
   });
 
   logoutLink.addEventListener("click", () => {
@@ -52,101 +175,30 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       const plan = button.getAttribute("data-plan");
-      await upgradeToPremium(user.uid, plan);
-      updateSubscriptionUI(user.uid);
+      await upgradeToPremium(user.uid, plan, userDoc, storeDoc);
+
+      const userSnap = await getDoc(doc(db, "users", user.uid));
+      userDoc = userSnap.exists() ? userSnap.data() : null;
+
+      updateSubscriptionUI();
+      checkUserSubscription();
     });
   });
 
   searchInput.addEventListener("input", (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredStores = allStores.filter((store) =>
-      store.storeName.toLowerCase().startsWith(searchTerm)
-    );
-    updateStoreList(filteredStores);
-  });
-
-  async function fetchStores() {
-    try {
-      const storesCollection = collection(db, "stores");
-      const storeSnapshot = await getDocs(storesCollection);
-
-      const stores = storeSnapshot.docs.map((doc) => {
-        const data = doc.data() || {};
-        return {
-          storeId: doc.id,
-          storeName: data.storeName ?? "Unknown Store",
-          ownerId: data.ownerId ?? "Unknown Owner",
-        };
-      });
-
-      stores.sort((a, b) => a.storeName.localeCompare(b.storeName));
-      return stores;
-    } catch (error) {
-      console.error("❌ Error fetching stores:", error);
-      return [];
-    }
-  }
-
-  function updateStoreList(filteredStores) {
-    storeList.innerHTML = "";
-
-    if (filteredStores.length === 0) {
-      noResults.style.display = "block";
-      return;
-    } else {
-      noResults.style.display = "none";
-    }
-
-    filteredStores.slice(0, 7).forEach((store) => {
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="viewstore.html?id=${store.storeId}">${store.storeName}</a>`;
-      storeList.appendChild(li);
-    });
-  }
-
-  async function updateSubscriptionUI(userId) {
-    const userRef = doc(db, "users", userId);
-    const userSnap = await getDoc(userRef);
-
-    if (!userSnap.exists()) {
-      return;
-    }
-
-    const userData = userSnap.data();
-
-    const currentPlan = userData.subscription;
-
-    document.querySelectorAll(".subscription-btn").forEach((button) => {
-      const plan = button.getAttribute("data-plan");
-
-      if (plan === currentPlan) {
-        button.textContent = "Сегашен план";
-        button.disabled = true;
-        button.classList.add(
-          "bg-gray-400",
-          "text-gray-200",
-          "cursor-not-allowed"
-        );
-        button.classList.remove("bg-blue-600", "hover:bg-blue-700");
-      } else if (currentPlan) {
-        button.textContent = "Промени план";
-        button.disabled = false;
-        button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
-        button.classList.remove(
-          "bg-gray-400",
-          "text-gray-200",
-          "cursor-not-allowed"
-        );
-      } else {
-        button.textContent = "Започни";
-        button.disabled = false;
-        button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
-        button.classList.remove(
-          "bg-gray-400",
-          "text-gray-200",
-          "cursor-not-allowed"
-        );
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+      const searchTerm = event.target.value.trim().toLowerCase();
+      if (searchTerm.length === 0) {
+        storeList.innerHTML = "";
+        noResults.style.display = "none";
+        return;
       }
-    });
-  }
+
+      const results = await searchStoresByName(searchTerm);
+      updateStoreList(results);
+    }, 300);
+  });
 });
+
+export { checkUserSubscription };

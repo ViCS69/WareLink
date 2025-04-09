@@ -13,6 +13,9 @@ const closeSettingsTopBtn = document.getElementById("close-settings-top");
 const saveSettingsBtn = document.getElementById("save-settings");
 const loadingIndicator = document.getElementById("settings-loading");
 
+let originalSettings = {};
+let loadingSettings = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   if (settingsBtn) {
     settingsBtn.addEventListener("click", async () => {
@@ -43,25 +46,41 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadUserSettings() {
+  if (loadingSettings) return;
+  loadingSettings = true;
+
   const user = auth.currentUser;
   if (!user) {
     console.error("❌ No logged-in user.");
+    loadingSettings = false;
     return;
   }
 
   const userRef = doc(db, "users", user.uid);
+  const cacheKey = `user_${user.uid}`;
+  const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+  const maxAge = 1000 * 60 * 5;
+
   showLoading(true);
 
-  const cachedData = localStorage.getItem(`user_${user.uid}`);
-  if (cachedData) {
-    populateUI(JSON.parse(cachedData));
+  if (cached && Date.now() - (cached.__timestamp || 0) < maxAge) {
+    originalSettings = { ...cached };
+    delete originalSettings.__timestamp;
+    populateUI(originalSettings);
+    showLoading(false);
+    loadingSettings = false;
+    return;
   }
 
   try {
     const userSnap = await getDoc(userRef);
     if (userSnap.exists()) {
       const userData = userSnap.data();
-      localStorage.setItem(`user_${user.uid}`, JSON.stringify(userData));
+      originalSettings = { ...userData };
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ ...userData, __timestamp: Date.now() })
+      );
       populateUI(userData);
     } else {
       console.warn("⚠️ No user settings found.");
@@ -70,6 +89,7 @@ async function loadUserSettings() {
     console.error("❌ Error fetching user settings:", error);
   } finally {
     showLoading(false);
+    loadingSettings = false;
   }
 }
 
@@ -93,7 +113,11 @@ async function saveUserSettings() {
   Object.keys(fieldMappings).forEach((fieldId) => {
     const input = document.getElementById(`${fieldId}-input`);
     if (input) {
-      updatedData[fieldMappings[fieldId]] = input.value;
+      const key = fieldMappings[fieldId];
+      const newValue = input.value.trim();
+      if (originalSettings[key] !== newValue) {
+        updatedData[key] = newValue;
+      }
     }
   });
 
@@ -104,8 +128,13 @@ async function saveUserSettings() {
 
   try {
     await updateDoc(userRef, updatedData);
-    localStorage.setItem(`user_${user.uid}`, JSON.stringify(updatedData));
-    alert("✅ Настройките са запазени!");
+
+    const newUserData = { ...originalSettings, ...updatedData };
+    localStorage.setItem(
+      `user_${user.uid}`,
+      JSON.stringify({ ...newUserData, __timestamp: Date.now() })
+    );
+
     settingsTab.classList.add("hidden");
     document.body.classList.remove("noscroll");
   } catch (error) {
@@ -115,44 +144,43 @@ async function saveUserSettings() {
 }
 
 function populateUI(userData) {
-  populateSettingsField(
-    "business-name",
-    userData.businessName || "Не е въведено"
-  );
-  populateSettingsField("eik", userData.eik || "Не е въведено");
-  populateSettingsField("zdds", userData.zdds || "Не е въведено");
-  populateSettingsField("mol", userData.mol || "Не е въведено");
-  populateSettingsField("address", userData.address || "Не е въведено");
+  for (const [fieldId, labelText] of Object.entries({
+    "business-name": "Име на бизнеса",
+    eik: "ЕИК",
+    zdds: "ЗДДС номер",
+    mol: "МОЛ",
+    address: "Адрес",
+  })) {
+    populateSettingsField(fieldId, userData[fieldMappings[fieldId]] || "Не е въведено", labelText);
+  }
 }
 
-function populateSettingsField(fieldId, value) {
+const fieldMappings = {
+  "business-name": "businessName",
+  eik: "eik",
+  zdds: "zdds",
+  mol: "mol",
+  address: "address",
+};
+
+function populateSettingsField(fieldId, value, label) {
   const field = document.getElementById(fieldId);
   if (!field) {
     console.warn(`⚠️ Field ${fieldId} not found.`);
     return;
   }
 
-  const labels = {
-    "business-name": "Име на бизнеса",
-    eik: "ЕИК",
-    zdds: "ЗДДС номер",
-    mol: "МОЛ",
-    address: "Адрес",
-  };
-
-  const label = labels[fieldId] || fieldId;
-
   field.innerHTML = `
-        <strong>${label}:</strong> 
-        <span id="${fieldId}-text" class="text-gray-700">${value}</span>
-        <span id="${fieldId}-edit" class="text-blue-500 text-sm cursor-pointer ml-2">[Редактирай]</span>
-    `;
+    <strong>${label}:</strong> 
+    <span id="${fieldId}-text" class="text-gray-700">${value}</span>
+    <span id="${fieldId}-edit" class="text-blue-500 text-sm cursor-pointer ml-2">[Редактирай]</span>
+  `;
 
   document.getElementById(`${fieldId}-edit`).addEventListener("click", () => {
     field.innerHTML = `
-            <strong>${label}:</strong> 
-            <input type="text" id="${fieldId}-input" value="${value}" class="w-full border p-2 rounded">
-        `;
+      <strong>${label}:</strong> 
+      <input type="text" id="${fieldId}-input" value="${value}" class="w-full border p-2 rounded">
+    `;
     document.getElementById(`${fieldId}-input`).focus();
   });
 }

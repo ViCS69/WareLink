@@ -20,6 +20,14 @@ document.addEventListener("DOMContentLoaded", () => {
 async function handleRegister(e) {
   e.preventDefault();
 
+  const registerBtn = document.getElementById("register-btn");
+  const spinner = document.getElementById("register-spinner");
+  const text = document.getElementById("register-text");
+
+  registerBtn.disabled = true;
+  spinner.classList.remove("hidden");
+  text.textContent = "Регистриране...";
+
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const businessName = document.getElementById("business-name").value;
@@ -37,12 +45,15 @@ async function handleRegister(e) {
     const user = userCredential.user;
 
     await createUser(user, businessName, eik, zdds, mol, address);
+    document.getElementById("register-btn").disabled = true;
 
-    alert("✅ Регистрация успешна!");
     window.location.href = "loggedIn.html";
   } catch (error) {
     console.error("❌ Registration error:", error);
     alert(error.message);
+    spinner.classList.add("hidden");
+    text.textContent = "Регистрация";
+    registerBtn.disabled = false;
   }
 }
 

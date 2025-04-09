@@ -6,6 +6,7 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 import { auth } from "./auth.js";
+import { openStoreNameModal } from "./loggedIn.js";
 
 export const subscriptionPlans = {
   starter: { name: "Стартов", productLimit: 500 },
@@ -13,21 +14,16 @@ export const subscriptionPlans = {
   professional: { name: "Професионален", productLimit: Infinity },
 };
 
-async function upgradeToPremium(userId, plan) {
+async function upgradeToPremium(userId, plan, existingUserData = null, existingStoreData = null) {
   if (!subscriptionPlans[plan]) {
     console.error("❌ Invalid plan selected");
     return;
   }
 
   const userRef = doc(db, "users", userId);
-  const userSnap = await getDoc(userRef);
+  const storeRef = doc(db, "stores", userId);
 
-  if (!userSnap.exists()) {
-    alert("❌ Потребителят не съществува!");
-    return;
-  }
-
-  const userData = userSnap.data();
+  const userData = existingUserData || (await getDoc(userRef)).data();
   const currentPlan = userData.subscription || null;
 
   if (currentPlan === plan) {
@@ -41,36 +37,34 @@ async function upgradeToPremium(userId, plan) {
     const confirmDowngrade = confirm(
       `⚠️ Вашият лимит за продукти ще бъде намален до ${subscriptionPlans[plan].productLimit}. Искате ли да продължите?`
     );
-
-    if (!confirmDowngrade) {
-      return;
-    }
+    if (!confirmDowngrade) return;
   }
 
-  let storeRef = doc(db, "stores", userId);
-  let storeSnap = await getDoc(storeRef);
-  let storeName = storeSnap.exists() ? storeSnap.data().storeName : null;
+  let storeName = existingStoreData?.storeName;
 
   if (!storeName) {
-    storeName = prompt("Въведете име на вашия магазин:");
-    if (!storeName) {
-      alert("❌ Магазинът трябва да има име!");
-      return;
+    const storeSnap = await getDoc(storeRef);
+    if (storeSnap.exists()) {
+      storeName = storeSnap.data().storeName;
+    } else {
+      storeName = await openStoreNameModal();
+      if (!storeName) {
+        alert("❌ Магазинът трябва да има име!");
+        return;
+      }
     }
-
-    await setDoc(storeRef, {
-      ownerId: userId,
-      storeName: storeName,
-      productLimit: subscriptionPlans[plan].productLimit,
-    });
   }
+
+  await setDoc(storeRef, {
+    ownerId: userId,
+    storeName,
+    productLimit: subscriptionPlans[plan].productLimit,
+  }, { merge: true });
 
   await updateDoc(userRef, {
     subscription: plan,
     productLimit: subscriptionPlans[plan].productLimit,
   });
-
-  alert(`Вашият план е променен на ${subscriptionPlans[plan].name}!`);
 }
 
 export { upgradeToPremium };

@@ -21,7 +21,9 @@
       }
     </style>
   </head>
-  <body class = "min-h-screen bg-[radial-gradient(circle,_white_60%,_theme('colors.gray.400')_100%)]">
+  <body
+    class="min-h-screen bg-[radial-gradient(circle,_white_60%,_theme('colors.gray.400')_100%)]"
+  >
     <header
       class="w-4/5 mx-auto flex items-center justify-between px-6 py-4 mb-32"
     >
@@ -43,15 +45,14 @@
 
       <div>
         <a
-          href="store.html"
+          href="#"
           id="proceed-btn"
-          class="inline-block w-36 h-auto text-center bg-gray-300 hover:bg-gray-200 text-purple-500 font-bold ml-3 py-2 px-4 rounded-lg hover:outline-2 outline-gray-800"
+          class="inline-block w-36 h-auto text-center bg-gray-300 hover:bg-gray-200 text-purple-500 font-bold ml-3 py-2 px-4 rounded-lg hover:outline-2 outline-gray-800 pointer-events-none opacity-50"
         >
           Магазин
         </a>
-        <a id="logout-link" class="text-xl hover:text-blue-500 ml-3"
-          >Изход</a
-        >
+
+        <a id="logout-link" class="text-xl hover:text-blue-500 ml-3">Изход</a>
         <button
           id="settings-btn"
           class="text-xl hover:scale-125 hover:text-blue-500 transition-transform duration-200 hidden"
@@ -223,6 +224,22 @@
         >
           Затвори
         </button>
+      </div>
+    </div>
+
+    <div id="storeNameModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded-xl shadow-xl w-80">
+        <h2 class="text-xl font-semibold mb-4">Име на магазин</h2>
+        <input
+          id="storeNameInput"
+          type="text"
+          class="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
+          placeholder="Въведете име на магазин"
+        />
+        <div class="flex justify-end space-x-2">
+          <button id="cancelStoreNameBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Отказ</button>
+          <button id="confirmStoreNameBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Запази</button>
+        </div>
       </div>
     </div>
 

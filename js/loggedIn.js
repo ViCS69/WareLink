@@ -45,17 +45,17 @@ function updateSubscriptionUI() {
     const plan = button.getAttribute("data-plan");
 
     if (plan === currentPlan) {
-      button.textContent = "Сегашен план";
+      button.textContent = "Current plan";
       button.disabled = true;
       button.classList.add("bg-gray-400", "text-gray-200", "cursor-not-allowed");
       button.classList.remove("bg-blue-600", "hover:bg-blue-700");
     } else if (currentPlan) {
-      button.textContent = "Промени план";
+      button.textContent = "Change plan";
       button.disabled = false;
       button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
       button.classList.remove("bg-gray-400", "text-gray-200", "cursor-not-allowed");
     } else {
-      button.textContent = "Започни";
+      button.textContent = "Start";
       button.disabled = false;
       button.classList.add("bg-blue-600", "hover:bg-blue-700", "text-white");
       button.classList.remove("bg-gray-400", "text-gray-200", "cursor-not-allowed");
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    userEmailElement.textContent = `Влезли сте като ${user.email}`;
+    userEmailElement.textContent = `You're logged in as ${user.email}`;
     userEmailElement.classList.remove("hidden");
     settingsBtn.classList.remove("hidden");
     logoutLink.classList.remove("hidden");
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", async () => {
       const user = auth.currentUser;
       if (!user) {
-        alert("❌ Трябва да сте влезли, за да надстроите абонамента.");
+        alert("You have to login to edit your subscribtion.");
         return;
       }
 

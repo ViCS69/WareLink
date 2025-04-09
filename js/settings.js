@@ -122,7 +122,7 @@ async function saveUserSettings() {
   });
 
   if (Object.keys(updatedData).length === 0) {
-    alert("⚠️ Няма направени промени.");
+    alert("⚠️ No saved changes.");
     return;
   }
 
@@ -138,8 +138,7 @@ async function saveUserSettings() {
     settingsTab.classList.add("hidden");
     document.body.classList.remove("noscroll");
   } catch (error) {
-    console.error("❌ Error updating user settings:", error);
-    alert("⚠️ Грешка при запазването на настройките.");
+    alert("⚠️ Error updating user settings:.");
   }
 }
 

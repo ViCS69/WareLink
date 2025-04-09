@@ -20,7 +20,6 @@ async function getStoreId(userUID) {
   const storeSnapshot = await getDocs(storeQuery);
 
   if (storeSnapshot.empty) {
-    console.error("No store found for user:", userUID);
     throw new Error("Не е намерен магазин за този потребител!");
   }
 
@@ -112,12 +111,12 @@ async function addCategory(categoryName) {
   try {
     const userUID = localStorage.getItem("userUID");
     if (!userUID) {
-      throw new Error("Не сте влезли в системата!");
+      throw new Error("You are not logged in!");
     }
 
     const exists = await checkIfCategoryExists(categoryName);
     if (exists) {
-      throw new Error("Тази категория вече съществува!");
+      throw new Error("This category already exists!");
     }
 
     const storeQuery = query(
@@ -127,7 +126,7 @@ async function addCategory(categoryName) {
     const storeSnapshot = await getDocs(storeQuery);
 
     if (storeSnapshot.empty) {
-      throw new Error("Не е намерен магазин!");
+      throw new Error("Store isn't found!");
     }
 
     const storeId = storeSnapshot.docs[0].id;
@@ -149,7 +148,7 @@ async function deleteCategory(categoryName, storeId) {
   try {
     if (
       !confirm(
-        `Сигурни ли сте, че искате да изтриете категория "${categoryName}"?`
+        `Are you sure you want to delete category: "${categoryName}"?`
       )
     ) {
       return;
@@ -164,7 +163,7 @@ async function deleteCategory(categoryName, storeId) {
     const categorySnapshot = await getDocs(categoryQuery);
 
     if (categorySnapshot.empty) {
-      throw new Error("Категорията не е намерена!");
+      throw new Error("Category isn't found!");
     }
 
     await deleteDoc(doc(db, "categories", categorySnapshot.docs[0].id));
@@ -174,7 +173,6 @@ async function deleteCategory(categoryName, storeId) {
     await loadProducts();
   } catch (error) {
     console.error("Error deleting category:", error);
-    alert(`Грешка при изтриване на категорията: ${error.message}`);
   }
 }
 

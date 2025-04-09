@@ -14,12 +14,12 @@ async function handleLogin(e) {
   const loginText = document.getElementById("login-text");
 
   spinner.classList.remove("hidden");
-  loginText.textContent = "Влизане...";
+  loginText.textContent = "Logging in...";
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value.trim();
 
   if (!email || !password) {
-    showError("Моля, въведете имейл и парола!");
+    showError("Please enter email and password");
     return;
   }
 
@@ -30,13 +30,13 @@ async function handleLogin(e) {
     console.error("Login error:", error);
     
     spinner.classList.add("hidden");
-    loginText.textContent = "Вход";
+    loginText.textContent = "Login";
     loginBtn.disabled = false;
 
     if (error.code === "auth/user-not-found") {
-      showError("Невалиден имейл или потребителят не съществува.");
+      showError("Invalid email.");
     } else if (error.code === "auth/wrong-password") {
-      showError("Грешна парола. Опитайте отново.");
+      showError("Wrong password. Try again.");
     } else {
       showError(`${error.message}`);
     }

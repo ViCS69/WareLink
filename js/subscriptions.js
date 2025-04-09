@@ -9,9 +9,9 @@ import { auth } from "./auth.js";
 import { openStoreNameModal } from "./loggedIn.js";
 
 export const subscriptionPlans = {
-  starter: { name: "Стартов", productLimit: 500 },
-  base: { name: "Базов", productLimit: 1500 },
-  professional: { name: "Професионален", productLimit: Infinity },
+  starter: { name: "Starter", productLimit: 500 },
+  base: { name: "Base", productLimit: 1500 },
+  professional: { name: "Professional", productLimit: Infinity },
 };
 
 async function upgradeToPremium(userId, plan, existingUserData = null, existingStoreData = null) {
@@ -27,7 +27,7 @@ async function upgradeToPremium(userId, plan, existingUserData = null, existingS
   const currentPlan = userData.subscription || null;
 
   if (currentPlan === plan) {
-    alert(`⚠️ Вие вече сте на план ${subscriptionPlans[plan].name}!`);
+    alert(`⚠️ You are already on ${subscriptionPlans[plan].name} plan!`);
     return;
   }
 
@@ -35,7 +35,7 @@ async function upgradeToPremium(userId, plan, existingUserData = null, existingS
 
   if (subscriptionPlans[plan].productLimit < currentLimit) {
     const confirmDowngrade = confirm(
-      `⚠️ Вашият лимит за продукти ще бъде намален до ${subscriptionPlans[plan].productLimit}. Искате ли да продължите?`
+      `⚠️ Your product limit will be lowered by: ${subscriptionPlans[plan].productLimit}. Do you want to continue??`
     );
     if (!confirmDowngrade) return;
   }
@@ -49,7 +49,7 @@ async function upgradeToPremium(userId, plan, existingUserData = null, existingS
     } else {
       storeName = await openStoreNameModal();
       if (!storeName) {
-        alert("❌ Магазинът трябва да има име!");
+        alert("❌ The store must have a name!");
         return;
       }
     }

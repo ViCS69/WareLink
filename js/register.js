@@ -26,7 +26,7 @@ async function handleRegister(e) {
 
   registerBtn.disabled = true;
   spinner.classList.remove("hidden");
-  text.textContent = "Регистриране...";
+  text.textContent = "Registering...";
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -52,7 +52,7 @@ async function handleRegister(e) {
     console.error("❌ Registration error:", error);
     alert(error.message);
     spinner.classList.add("hidden");
-    text.textContent = "Регистрация";
+    text.textContent = "Register";
     registerBtn.disabled = false;
   }
 }

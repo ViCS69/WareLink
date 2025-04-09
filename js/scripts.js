@@ -21,7 +21,7 @@ import {
   handleLogoUpload,
   loadStoreName,
 } from "./logoManager.js";
-import {cleanProductName} from "./productManager.js"
+import { cleanProductName } from "./productManager.js";
 window.addEventListener("unhandledrejection", (event) => {
   if (event.reason?.message?.includes("ERR_BLOCKED_BY_CLIENT")) {
     event.preventDefault();
@@ -61,36 +61,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeEventListeners();
   loadStoreLogo();
   let debounceTimer;
-const nameInput = document.getElementById("nameInput");
-const nameStatus = document.getElementById("nameStatus");
-const newProductFields = document.getElementById("newProductFields");
+  const nameInput = document.getElementById("nameInput");
+  const nameStatus = document.getElementById("nameStatus");
+  const newProductFields = document.getElementById("newProductFields");
 
-nameInput.addEventListener("input", (e) => {
-  const value = e.target.value.trim();
+  nameInput.addEventListener("input", (e) => {
+    const value = e.target.value.trim();
 
-  clearTimeout(debounceTimer);
+    clearTimeout(debounceTimer);
 
-  if (value === "") {
-    nameStatus.textContent = "";
-    newProductFields.classList.add("hidden");
-    return;
-  }
-
-  nameStatus.textContent = "Checking...";
-  
-  debounceTimer = setTimeout(async () => {
-    const cleanedName = cleanProductName(value); 
-    const exists = await checkIfProductExists(cleanedName); 
-    
-    if (exists) {
-      nameStatus.textContent = "Product exists in your warehouse.";
+    if (value === "") {
+      nameStatus.textContent = "";
       newProductFields.classList.add("hidden");
-    } else {
-      nameStatus.textContent = "New product. Please enter additional info.";
-      newProductFields.classList.remove("hidden");
+      return;
     }
-  }, 1000);
-});
+
+    nameStatus.textContent = "Checking...";
+
+    debounceTimer = setTimeout(async () => {
+      const cleanedName = cleanProductName(value);
+      const exists = await checkIfProductExists(cleanedName);
+
+      if (exists) {
+        nameStatus.textContent = "Product exists in your warehouse.";
+        newProductFields.classList.add("hidden");
+      } else {
+        nameStatus.textContent = "New product. Please enter additional info.";
+        newProductFields.classList.remove("hidden");
+      }
+    }, 1000);
+  });
 
   const userUID = auth.currentUser?.uid;
   if (userUID) {
@@ -159,8 +159,7 @@ function initializeEventListeners() {
       const productId = categoryModal.dataset.productId;
 
       if (!selectedCategory || !productId) {
-        console.error("❌ No category selected or product ID missing.");
-        alert("Моля, изберете категория.");
+        alert("No category selected or product ID missing.");
         return;
       }
 
@@ -171,8 +170,7 @@ function initializeEventListeners() {
 
         await loadProducts();
       } catch (error) {
-        console.error("❌ Error changing category:", error);
-        alert("Грешка при промяна на категорията.");
+        alert("Error changing category.");
       }
     });
 
@@ -198,12 +196,12 @@ function initializeEventListeners() {
       }
 
       if (!name || !price || !category || !productImage) {
-        alert("Моля, попълнете всички полета и изберете изображение.");
+        alert("Fill all fields and add an image.");
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = "Качване...";
+      submitBtn.textContent = "Uploading...";
 
       try {
         await addProduct(name, price);

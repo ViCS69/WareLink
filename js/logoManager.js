@@ -65,14 +65,13 @@ async function loadStoreName() {
 async function handleLogoUpload(event) {
   const file = event.target.files[0];
   if (!file) {
-    alert("Моля, изберете файл.");
+    alert("Please choose file.");
     return;
   }
 
   try {
     const user = auth.currentUser;
     if (!user) {
-      console.error("❌ Не сте влезли в системата!");
       alert("Не сте влезли в системата!");
       return;
     }
@@ -104,8 +103,7 @@ async function handleLogoUpload(event) {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
       },
       (error) => {
-        console.error("❌ Грешка при качване:", error);
-        alert(`Грешка при качване: ${error.message}`);
+        alert(`Error with upload: ${error.message}`);
       },
       async () => {
         const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
@@ -119,8 +117,7 @@ async function handleLogoUpload(event) {
       }
     );
   } catch (error) {
-    console.error("❌ Грешка при качване:", error);
-    alert(`Грешка при качване: ${error.message}`);
+    alert(`Error with upload: ${error.message}`);
   }
 }
 

@@ -95,7 +95,7 @@
                   id="add-category-btn"
                   class="block w-full text-left px-4 py-2 bg-green-500 hover:bg-green-600 text-white"
                 >
-                  + Добави категория
+                  + Add category
                 </button>
               </div>
             </div>
@@ -119,59 +119,29 @@
 
     <div id="editProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
       <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-lg space-y-4 relative">
-        <h2 class="text-xl font-bold mb-4">Редакция на продукт</h2>
+        <h2 class="text-xl font-bold mb-4">Edit product</h2>
     
-        <label class="block text-sm font-medium">Име</label>
+        <label class="block text-sm font-medium">Name</label>
         <input id="editName" type="text" class="w-full border px-3 py-2 rounded" />
     
-        <label class="block text-sm font-medium">Цена (лв)</label>
+        <label class="block text-sm font-medium">Price (BGN)</label>
         <input id="editPrice" type="number" step="0.01" class="w-full border px-3 py-2 rounded" />
     
-        <label class="block text-sm font-medium">Добави количество</label>
+        <label class="block text-sm font-medium">Add quantity</label>
         <input id="editQuantity" type="number" class="w-full border px-3 py-2 rounded" />
     
-        <label class="block text-sm font-medium">Категория</label>
+        <label class="block text-sm font-medium">Category</label>
         <select id="editCategory" class="w-full border px-3 py-2 rounded"></select>
     
-        <label class="block text-sm font-medium">Линк към снимка</label>
+        <label class="block text-sm font-medium">ImageUrl</label>
         <input id="editImageUrl" type="text" class="w-full border px-3 py-2 rounded" />
     
         <div class="flex justify-end gap-2 mt-4">
-          <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Отказ</button>
-          <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Запази</button>
+          <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">cancel</button>
+          <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
         </div>
       </div>
     </div>
-
-    <!-- <div
-      id="categoryModal"
-      class="fixed inset-0 flex items-center justify-center hidden"
-    >
-      <div class="bg-white p-6 rounded shadow-lg w-80 relative">
-        <button
-          id="closeCategoryModal"
-          class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl"
-        >
-          &times;
-        </button>
-        <h2 id="categoryModalTitle" class="text-lg font-semibold mb-4">
-          Промяна на категорията
-        </h2>
-
-        <form id="changeCategoryForm" class="space-y-4">
-          <select id="categorySelectDropdown" class="w-full border rounded p-2">
-            <option disabled selected>Изберете категория</option>
-          </select>
-          <button
-            type="submit"
-            id="saveCategoryBtn"
-            class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-          >
-            Запази
-          </button>
-        </form>
-      </div>
-    </div> -->
 
     <div
       id="addCategoryModal"
@@ -184,13 +154,13 @@
         >
           &times;
         </button>
-        <h2 class="text-lg font-semibold mb-4">Добави нова категория</h2>
+        <h2 class="text-lg font-semibold mb-4">Add new category</h2>
 
         <form id="addCategoryForm" class="space-y-4">
           <input
             type="text"
             id="categoryNameInput"
-            placeholder="Име на категория"
+            placeholder="Category name"
             class="w-full border rounded p-2"
           />
           <button
@@ -198,7 +168,7 @@
             id="addCategoryBtn"
             class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
           >
-            Добави
+            Add
           </button>
         </form>
       </div>

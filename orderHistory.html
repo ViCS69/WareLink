@@ -76,7 +76,7 @@
                     }</p>
                     <p class="text-sm text-gray-600"><strong>Total:</strong> ${order.total.toFixed(
                       2
-                    )}лв.</p>
+                    )}BGN</p>
                     <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${new Date(
                       order.timestamp.seconds * 1000
                     ).toLocaleString()}</p>
@@ -86,7 +86,7 @@
                             (item) =>
                               `<li class="text-sm">${item.quantity}x ${
                                 item.name
-                              } - ${item.price.toFixed(2)}лв.</li>`
+                              } - ${item.price.toFixed(2)}BGN</li>`
                           )
                           .join("")}
                     </ul>

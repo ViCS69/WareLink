@@ -91,11 +91,11 @@ function updateCart(storeId) {
         </div>
         <div>
           <p class="font-medium">${item.name}</p>
-          <p class="text-sm">${item.quantity} x ${item.price.toFixed(2)}лв.</p>
+          <p class="text-sm">${item.quantity} x ${item.price.toFixed(2)}€</p>
         </div>
       </div>
       <div class="flex flex-col items-end">
-        <p class="font-semibold">${(item.price * item.quantity).toFixed(2)}лв.</p>
+        <p class="font-semibold">${(item.price * item.quantity).toFixed(2)}€</p>
         <button class="text-red-500 text-sm mt-1 hover:underline" data-remove="${item.id}">Remove</button>
       </div>
     `;
@@ -110,7 +110,7 @@ function updateCart(storeId) {
     }
   });
 
-  document.getElementById("cart-total").textContent = `${total.toFixed(2)}лв.`;
+  document.getElementById("cart-total").textContent = `${total.toFixed(2)}€`;
   saveCart(storeId);
 }
 
@@ -164,7 +164,7 @@ async function checkout() {
     if (key) localStorage.removeItem(key);
     cartItems = [];
     document.getElementById("cart-items").innerHTML = "";
-    document.getElementById("cart-total").textContent = "0.00лв.";
+    document.getElementById("cart-total").textContent = "0.00€";
 
     window.location.href = "orders.html";
   } catch (error) {

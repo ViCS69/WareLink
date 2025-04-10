@@ -81,7 +81,7 @@
           }</p>
           <p class="text-sm text-gray-600"><strong>Total:</strong> ${total.toFixed(
             2
-          )}лв.</p>
+          )}€.</p>
           <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${timestamp}</p>
           <p class="text-sm text-gray-600"><strong>Status:</strong> ${
             order.status || "Pending"
@@ -92,7 +92,7 @@
                 (item) =>
                   `<li class="text-sm">${item.quantity}x ${
                     item.name
-                  } - ${item.price.toFixed(2)}лв.</li>`
+                  } - ${item.price.toFixed(2)}€</li>`
               )
               .join("")}
           </ul>

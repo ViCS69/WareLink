@@ -38,7 +38,7 @@
           class="cursor-pointer text-xl mr-3 hover:text-blue-500"
           onclick="switchSection('pricing')"
         >
-          Цени
+          Pricing
         </p>
       </div>
       <p id="user-email" class="hidden italic"></p>
@@ -49,10 +49,10 @@
           id="proceed-btn"
           class="inline-block w-36 h-auto text-center bg-gray-300 hover:bg-gray-200 text-purple-500 font-bold ml-3 py-2 px-4 rounded-lg hover:outline-2 outline-gray-800 pointer-events-none opacity-50"
         >
-          Магазин
+          Shop
         </a>
 
-        <a id="logout-link" class="text-xl hover:text-blue-500 ml-3">Изход</a>
+        <a id="logout-link" class="text-xl hover:text-blue-500 ml-3">Logout</a>
         <button
           id="settings-btn"
           class="text-xl hover:scale-125 hover:text-blue-500 transition-transform duration-200 hidden"
@@ -78,16 +78,16 @@
           placeholder="Търсене на магазини..."
         />
         <ul id="storeList"></ul>
-        <p id="noResults" style="display: none">няма намерени магазини</p>
+        <p id="noResults" style="display: none">No stores found</p>
       </div>
     </section>
 
     <section id="pricing" class="section pb-14">
       <div class="text-center py-10">
-        <p class="mb-5 text-2xl">Ценови планове</p>
+        <p class="mb-5 text-2xl">Price plans</p>
         <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">
-          Гъвкави цени спрямо нуждите <br />
-          на потребителя:
+          Flexible pricing based on <br />
+          customer needs:
         </h1>
       </div>
 
@@ -98,19 +98,19 @@
           class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
         >
           <div>
-            <h2 class="text-xl font-bold text-gray-900">Стартов</h2>
-            <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+            <h2 class="text-xl font-bold text-gray-900">Starter</h2>
+            <p class="text-sm text-gray-500 mt-2">Monthly price</p>
             <p class="mt-1 text-3xl font-semibold text-gray-900">
-              20€ <span class="text-lg">/месец</span>
+              20€ <span class="text-lg">/month</span>
             </p>
             <hr class="my-4 border-gray-300" />
 
-            <p class="text-sm text-gray-500">Брой продукти</p>
-            <p class="text-gray-900 text-lg font-bold">До 500</p>
+            <p class="text-sm text-gray-500">Products count</p>
+            <p class="text-gray-900 text-lg font-bold">Up to 400</p>
             <hr class="my-2 border-gray-300" />
 
-            <p class="text-sm text-gray-500">Анализи</p>
-            <p class="text-gray-900 text-lg font-bold">Базови анализи</p>
+            <p class="text-sm text-gray-500">Analytics</p>
+            <p class="text-gray-900 text-lg font-bold">Base analytics</p>
             <hr class="my-2 border-gray-300" />
           </div>
 
@@ -118,7 +118,7 @@
             data-plan="starter"
             class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            Започни
+            Start
           </button>
         </div>
 
@@ -126,26 +126,26 @@
           <div
             class="absolute -top-6 w-full bg-gray-800 text-white text-center text-sm font-bold py-1 rounded-t-lg"
           >
-            Най-популярен
+            Most popular
           </div>
 
           <div
             class="bg-white p-6 shadow-lg border border-gray-300 flex flex-col justify-between h-full w-full rounded-b-xl"
           >
             <div>
-              <h2 class="text-xl font-bold text-gray-900">Базов</h2>
-              <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+              <h2 class="text-xl font-bold text-gray-900">Base</h2>
+              <p class="text-sm text-gray-500 mt-2">Monthly price</p>
               <p class="mt-1 text-3xl font-semibold text-gray-900">
-                40€ <span class="text-lg">/месец</span>
+                40€ <span class="text-lg">/month</span>
               </p>
               <hr class="my-4 border-gray-300" />
 
-              <p class="text-sm text-gray-500">Брой продукти</p>
-              <p class="text-gray-900 text-lg font-bold">До 1500</p>
+              <p class="text-sm text-gray-500">Products count</p>
+              <p class="text-gray-900 text-lg font-bold">Up to 1500</p>
               <hr class="my-2 border-gray-300" />
 
-              <p class="text-sm text-gray-500">Анализи</p>
-              <p class="text-gray-900 text-lg font-bold">Напреднали анализи</p>
+              <p class="text-sm text-gray-500">Analytics</p>
+              <p class="text-gray-900 text-lg font-bold">Advanced analytics</p>
               <hr class="my-2 border-gray-300" />
             </div>
 
@@ -153,7 +153,7 @@
               data-plan="base"
               class="subscription-btn mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
             >
-              Започни
+              Start
             </button>
           </div>
         </div>
@@ -162,24 +162,24 @@
           class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
         >
           <div>
-            <h2 class="text-xl font-bold text-gray-900">Професионален</h2>
-            <p class="text-sm text-gray-500 mt-2">Месечна цена</p>
+            <h2 class="text-xl font-bold text-gray-900">Professional</h2>
+            <p class="text-sm text-gray-500 mt-2">Monthly price</p>
             <p class="mt-1 text-3xl font-semibold text-gray-900">
-              99€ <span class="text-lg">/месец</span>
+              99€ <span class="text-lg">/month</span>
             </p>
             <hr class="my-4 border-gray-300" />
 
-            <p class="text-sm text-gray-500">Брой продукти</p>
-            <p class="text-gray-900 text-lg font-bold">Безброй</p>
+            <p class="text-sm text-gray-500">Products count</p>
+            <p class="text-gray-900 text-lg font-bold">Infinite</p>
             <hr class="my-2 border-gray-300" />
 
-            <p class="text-sm text-gray-500">Анализи</p>
-            <p class="text-gray-900 text-lg font-bold">Професионални анализи</p>
+            <p class="text-sm text-gray-500">Analytics</p>
+            <p class="text-gray-900 text-lg font-bold">Professional analytics</p>
             <hr class="my-2 border-gray-300" />
 
-            <p class="text-sm text-gray-500">Поддръжка</p>
+            <p class="text-sm text-gray-500">Service</p>
             <p class="text-gray-900 text-lg font-bold">
-              Поддръжка на пълно работно време
+              Full time
             </p>
             <hr class="my-2 border-gray-300" />
           </div>
@@ -188,7 +188,7 @@
             data-plan="professional"
             class="subscription-btn mt-6 w-full text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition"
           >
-            Започни
+            Start
           </button>
         </div>
       </div>
@@ -201,9 +201,9 @@
       <div
         class="max-w-lg w-full mx-auto p-6 bg-white rounded-lg shadow-lg mt-10"
       >
-        <h2 class="text-lg font-bold mb-4">Настройки</h2>
+        <h2 class="text-lg font-bold mb-4">Settings</h2>
         <div id="settings-loading" class="hidden text-gray-500">
-          Зареждане...
+          Loading...
         </div>
         <div id="settings-fields" class="space-y-2">
           <div id="business-name"></div>
@@ -216,29 +216,29 @@
           id="save-settings"
           class="mt-4 bg-blue-500 text-white p-2 rounded"
         >
-          Запази
+          Save
         </button>
         <button
           id="close-settings"
           class="mt-4 bg-gray-900 text-white p-2 rounded"
         >
-          Затвори
+          Close
         </button>
       </div>
     </div>
 
     <div id="storeNameModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
       <div class="bg-white p-6 rounded-xl shadow-xl w-80">
-        <h2 class="text-xl font-semibold mb-4">Име на магазин</h2>
+        <h2 class="text-xl font-semibold mb-4">Store name</h2>
         <input
           id="storeNameInput"
           type="text"
           class="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
-          placeholder="Въведете име на магазин"
+          placeholder="Enter store name"
         />
         <div class="flex justify-end space-x-2">
-          <button id="cancelStoreNameBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Отказ</button>
-          <button id="confirmStoreNameBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Запази</button>
+          <button id="cancelStoreNameBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+          <button id="confirmStoreNameBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
         </div>
       </div>
     </div>

@@ -88,7 +88,7 @@
                 <p class="text-sm text-gray-600">Order ID: ${orderDoc.id}</p>
                 <p class="text-sm text-gray-600">Total: ${order.total.toFixed(
                   2
-                )}лв.</p>
+                )}€.</p>
                 <p class="text-sm text-gray-600">Placed on: ${new Date(
                   order.timestamp.seconds * 1000
                 ).toLocaleString()}</p>
@@ -98,7 +98,7 @@
                         (item) =>
                           `<li class="text-sm">${item.quantity}x ${
                             item.name
-                          } - ${item.price.toFixed(2)}лв.</li>`
+                          } - ${item.price.toFixed(2)}€</li>`
                       )
                       .join("")}
                 </ul>

@@ -366,7 +366,7 @@ function displayProduct(product) {
 
   const text = document.createElement("p");
   text.classList.add("text-lg", "font-semibold", "mt-2", "text-gray-800");
-  text.textContent = `${product.name} - ${product.price.toFixed(2)}лв.`;
+  text.textContent = `${product.name} - ${product.price.toFixed(2)}€.`;
 
   const isStorePage = document.getElementById("storePage") !== null;
   if (isStorePage) {

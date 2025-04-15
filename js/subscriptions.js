@@ -1,27 +1,22 @@
-import { db } from "./firebaseConfig.js";
-import {
-  doc,
-  updateDoc,
-  getDoc,
-  setDoc,
-} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-import { auth } from "./auth.js";
-import { openStoreNameModal } from "./loggedIn.js";
+import { db } from './firebaseConfig.js';
+import { doc, updateDoc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js';
+import { auth } from './auth.js';
+import { openStoreNameModal } from './loggedIn.js';
 
 export const subscriptionPlans = {
-  starter: { name: "Starter", productLimit: 500 },
-  base: { name: "Base", productLimit: 1500 },
-  professional: { name: "Professional", productLimit: Infinity },
+  starter: { name: 'Starter', productLimit: 500 },
+  base: { name: 'Base', productLimit: 1500 },
+  professional: { name: 'Professional', productLimit: Infinity }
 };
 
 async function upgradeToPremium(userId, plan, existingUserData = null, existingStoreData = null) {
   if (!subscriptionPlans[plan]) {
-    console.error("❌ Invalid plan selected");
+    console.error('❌ Invalid plan selected');
     return;
   }
 
-  const userRef = doc(db, "users", userId);
-  const storeRef = doc(db, "stores", userId);
+  const userRef = doc(db, 'users', userId);
+  const storeRef = doc(db, 'stores', userId);
 
   const userData = existingUserData || (await getDoc(userRef)).data();
   const currentPlan = userData.subscription || null;
@@ -49,21 +44,25 @@ async function upgradeToPremium(userId, plan, existingUserData = null, existingS
     } else {
       storeName = await openStoreNameModal();
       if (!storeName) {
-        alert("❌ The store must have a name!");
+        alert('❌ The store must have a name!');
         return;
       }
     }
   }
 
-  await setDoc(storeRef, {
-    ownerId: userId,
-    storeName,
-    productLimit: subscriptionPlans[plan].productLimit,
-  }, { merge: true });
+  await setDoc(
+    storeRef,
+    {
+      ownerId: userId,
+      storeName,
+      productLimit: subscriptionPlans[plan].productLimit
+    },
+    { merge: true }
+  );
 
   await updateDoc(userRef, {
     subscription: plan,
-    productLimit: subscriptionPlans[plan].productLimit,
+    productLimit: subscriptionPlans[plan].productLimit
   });
 }
 

@@ -13,7 +13,7 @@
     </div>
 
     <script type="module">
-      import { db, auth } from "./js/firebaseConfig.js";
+      import { db, auth } from './js/firebaseConfig.js';
       import {
         collection,
         query,
@@ -24,27 +24,23 @@
         setDoc,
         orderBy,
         updateDoc,
-        serverTimestamp,
-      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-      import { getAuth } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-      import { format } from "https://cdn.skypack.dev/date-fns";
+        serverTimestamp
+      } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js';
+      import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js';
+      import { getAuth } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js';
+      import { format } from 'https://cdn.skypack.dev/date-fns';
 
       async function loadReceivedOrders(storeId) {
         try {
-          const ordersQuery = query(
-            collection(db, "stores", storeId, "receivedOrders"),
-            orderBy("timestamp", "desc")
-          );
+          const ordersQuery = query(collection(db, 'stores', storeId, 'receivedOrders'), orderBy('timestamp', 'desc'));
 
           const ordersSnapshot = await getDocs(ordersQuery);
 
-          const ordersContainer = document.getElementById("orders-container");
-          ordersContainer.innerHTML = "";
+          const ordersContainer = document.getElementById('orders-container');
+          ordersContainer.innerHTML = '';
 
           if (ordersSnapshot.empty) {
-            ordersContainer.innerHTML =
-              "<p class='text-gray-500'>No received orders yet.</p>";
+            ordersContainer.innerHTML = "<p class='text-gray-500'>No received orders yet.</p>";
             return;
           }
 
@@ -52,49 +48,30 @@
             try {
               const order = orderDoc.data();
 
-              const total = typeof order.total === "number" ? order.total : 0;
+              const total = typeof order.total === 'number' ? order.total : 0;
               const timestamp = order.timestamp?.seconds
                 ? new Date(order.timestamp.seconds * 1000).toLocaleString()
-                : "Unknown";
+                : 'Unknown';
               const items = Array.isArray(order.items) ? order.items : [];
 
               const customer = {
-                email: order.email || "Unknown",
-                businessName: order.businessName || "N/A",
+                email: order.email || 'Unknown',
+                businessName: order.businessName || 'N/A'
               };
 
-              const orderElement = document.createElement("div");
-              orderElement.classList.add(
-                "border",
-                "p-4",
-                "rounded",
-                "shadow-sm",
-                "bg-gray-50"
-              );
+              const orderElement = document.createElement('div');
+              orderElement.classList.add('border', 'p-4', 'rounded', 'shadow-sm', 'bg-gray-50');
 
               orderElement.innerHTML = `
-          <p class="text-sm text-gray-600"><strong>Customer:</strong> ${
-            customer.businessName
-          } (${customer.email})</p>
-          <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${
-            orderDoc.id
-          }</p>
-          <p class="text-sm text-gray-600"><strong>Total:</strong> ${total.toFixed(
-            2
-          )}€.</p>
+          <p class="text-sm text-gray-600"><strong>Customer:</strong> ${customer.businessName} (${customer.email})</p>
+          <p class="text-sm text-gray-600"><strong>Order ID:</strong> ${orderDoc.id}</p>
+          <p class="text-sm text-gray-600"><strong>Total:</strong> ${total.toFixed(2)}€.</p>
           <p class="text-sm text-gray-600"><strong>Placed on:</strong> ${timestamp}</p>
-          <p class="text-sm text-gray-600"><strong>Status:</strong> ${
-            order.status || "Pending"
-          }</p>
+          <p class="text-sm text-gray-600"><strong>Status:</strong> ${order.status || 'Pending'}</p>
           <ul class="mt-2 list-disc list-inside">
             ${items
-              .map(
-                (item) =>
-                  `<li class="text-sm">${item.quantity}x ${
-                    item.name
-                  } - ${item.price.toFixed(2)}€</li>`
-              )
-              .join("")}
+              .map(item => `<li class="text-sm">${item.quantity}x ${item.name} - ${item.price.toFixed(2)}€</li>`)
+              .join('')}
           </ul>
           <button class="complete-order-btn bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-600" data-order-id="${
             orderDoc.id
@@ -105,36 +82,27 @@
 
               ordersContainer.appendChild(orderElement);
             } catch (orderError) {
-              console.error(
-                `❌ Error rendering order ${orderDoc.id}:`,
-                orderError
-              );
+              console.error(`❌ Error rendering order ${orderDoc.id}:`, orderError);
             }
           }
 
-          document.querySelectorAll(".complete-order-btn").forEach((button) => {
-            button.addEventListener("click", async (event) => {
+          document.querySelectorAll('.complete-order-btn').forEach(button => {
+            button.addEventListener('click', async event => {
               const orderId = event.target.dataset.orderId;
               await completeOrder(orderId, storeId);
             });
           });
         } catch (error) {
-          console.error("❌ Error loading received orders:", error);
+          console.error('❌ Error loading received orders:', error);
           document.getElementById(
-            "orders-container"
+            'orders-container'
           ).innerHTML = `<p class='text-red-500'>Error loading received orders: ${error.message}</p>`;
         }
       }
 
       async function completeOrder(orderId, storeId) {
         try {
-          const orderRef = doc(
-            db,
-            "stores",
-            storeId,
-            "receivedOrders",
-            orderId
-          );
+          const orderRef = doc(db, 'stores', storeId, 'receivedOrders', orderId);
           const orderSnap = await getDoc(orderRef);
 
           if (!orderSnap.exists()) {
@@ -149,7 +117,7 @@
           let totalItemsSold = 0;
 
           for (const item of items) {
-            const productRef = doc(db, "products", item.id);
+            const productRef = doc(db, 'products', item.id);
             const productSnap = await getDoc(productRef);
 
             if (!productSnap.exists()) {
@@ -161,7 +129,7 @@
             const newQuantity = (productData.quantity || 0) - item.quantity;
 
             await updateDoc(productRef, {
-              quantity: Math.max(newQuantity, 0),
+              quantity: Math.max(newQuantity, 0)
             });
 
             totalRevenue += (item.price || 0) * item.quantity;
@@ -169,24 +137,18 @@
           }
 
           const today = new Date();
-          const dailyKey = `daily-${format(today, "yyyy-MM-dd")}`;
-          const monthlyKey = `monthly-${format(today, "yyyy-MM")}`;
+          const dailyKey = `daily-${format(today, 'yyyy-MM-dd')}`;
+          const monthlyKey = `monthly-${format(today, 'yyyy-MM')}`;
 
-          const dailyRef = doc(db, "stores", storeId, "sales", dailyKey);
-          const monthlyRef = doc(db, "stores", storeId, "sales", monthlyKey);
+          const dailyRef = doc(db, 'stores', storeId, 'sales', dailyKey);
+          const monthlyRef = doc(db, 'stores', storeId, 'sales', monthlyKey);
 
           await Promise.all([
             updateSalesDoc(dailyRef, totalRevenue, totalItemsSold),
-            updateSalesDoc(monthlyRef, totalRevenue, totalItemsSold),
+            updateSalesDoc(monthlyRef, totalRevenue, totalItemsSold)
           ]);
 
-          const historyRef = doc(
-            db,
-            "stores",
-            storeId,
-            "orderHistory",
-            orderId
-          );
+          const historyRef = doc(db, 'stores', storeId, 'orderHistory', orderId);
           await setDoc(historyRef, orderData);
           await deleteDoc(orderRef);
 
@@ -204,22 +166,20 @@
           {
             totalSales: (existing.totalSales || 0) + revenue,
             totalItemsSold: (existing.totalItemsSold || 0) + itemCount,
-            updatedAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
           },
           { merge: true }
         );
       }
 
-      document.addEventListener("DOMContentLoaded", async () => {
-        const storeId = localStorage.getItem("userUID");
+      document.addEventListener('DOMContentLoaded', async () => {
+        const storeId = localStorage.getItem('userUID');
 
         if (storeId) {
           await loadReceivedOrders(storeId);
         } else {
-          console.warn(
-            "⚠️ No UID found in localStorage. Redirecting to login?"
-          );
-          document.getElementById("orders-container").innerHTML =
+          console.warn('⚠️ No UID found in localStorage. Redirecting to login?');
+          document.getElementById('orders-container').innerHTML =
             "<p class='text-gray-500'>Please log in to view your received orders.</p>";
         }
       });

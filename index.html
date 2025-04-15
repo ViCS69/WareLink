@@ -21,36 +21,22 @@
       }
     </style>
   </head>
-  <body
-    class="min-h-screen bg-[radial-gradient(circle,_white_60%,_theme('colors.gray.400')_100%)]"
-  >
+  <body class="min-h-screen bg-[radial-gradient(circle,_white_60%,_theme('colors.gray.400')_100%)]">
     <header class="w-2/3 mx-auto flex items-center justify-between px-6 py-2">
       <div class="flex items-center justify-center">
         <img
           src="resources/WareLinkLogo.svg"
           alt="WareLinkLogo"
           class="w-24 h-auto cursor-pointer mr-2"
-          onclick="switchSection('home')"
-        />
-        <p
-          class="cursor-pointer text-xl mr-3 hover:text-blue-500"
-          onclick="switchSection('pricing')"
-        >
-          Pricing
-        </p>
+          onclick="switchSection('home')" />
+        <p class="cursor-pointer text-xl mr-3 hover:text-blue-500" onclick="switchSection('pricing')">Pricing</p>
       </div>
       <p id="user-email" class="hidden"></p>
       <div class="flex items-center space-x-3">
-        <a
-          href="login.html"
-          id="login-btn"
-          class="cursor-pointer text-xl hover:text-blue-500"
-          >Login</a
-        >
+        <a href="login.html" id="login-btn" class="cursor-pointer text-xl hover:text-blue-500">Login</a>
         <a
           href="register.html"
-          class="inline-block w-48 h-auto text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200"
-        >
+          class="inline-block w-48 h-auto text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200">
           Start Here
         </a>
       </div>
@@ -59,9 +45,7 @@
     <main>
       <section id="home" class="section active">
         <div class="w-4/5 mx-auto text-center">
-          <p class="text-xl text-purple-500 font-bold">
-            Skip the extra steps
-          </p>
+          <p class="text-xl text-purple-500 font-bold">Skip the extra steps</p>
           <h1 class="font-poppins font-extrabold text-5xl mb-3 mt-2">
             Easier connectivity for<br />
             business and client
@@ -70,23 +54,17 @@
           <div class="mb-20">
             <a
               href="register.html"
-              class="inline-block w-48 h-auto text-center text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 py-2 px-4 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200"
-            >
+              class="inline-block w-48 h-auto text-center text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 py-2 px-4 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200">
               Start here
             </a>
             <a
-              class="inline-block w-48 h-auto text-center bg-gray-300 hover:bg-gray-200 text-purple-500 font-bold ml-3 py-2 px-4 rounded-lg hover:outline-2 outline-gray-300"
-            >
+              class="inline-block w-48 h-auto text-center bg-gray-300 hover:bg-gray-200 text-purple-500 font-bold ml-3 py-2 px-4 rounded-lg hover:outline-2 outline-gray-300">
               Appointment
             </a>
           </div>
 
           <div class="w-4/5 mx-auto mb-10">
-            <img
-              src="resources/StoreDesign.png"
-              alt="app design"
-              class="border-2 border-gray-500 rounded-xl"
-            />
+            <img src="resources/StoreDesign.png" alt="app design" class="border-2 border-gray-500 rounded-xl" />
           </div>
         </div>
       </section>
@@ -100,18 +78,12 @@
           </h1>
         </div>
 
-        <div
-          class="w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          <div
-            class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
-          >
+        <div class="w-4/5 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full">
             <div>
               <h2 class="text-xl font-bold text-gray-900">Starter</h2>
               <p class="text-sm text-gray-500 mt-2">Monthly price</p>
-              <p class="mt-1 text-3xl font-semibold text-gray-900">
-                20€ <span class="text-lg">/month</span>
-              </p>
+              <p class="mt-1 text-3xl font-semibold text-gray-900">20€ <span class="text-lg">/month</span></p>
               <hr class="my-4 border-gray-300" />
 
               <p class="text-sm text-gray-500">Product count</p>
@@ -125,28 +97,22 @@
 
             <button
               data-plan="starter"
-              class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-            >
+              class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
               Start
             </button>
           </div>
 
           <div class="relative h-full flex flex-col">
-            <div
-              class="absolute -top-6 w-full bg-gray-800 text-white text-center text-sm font-bold py-1 rounded-t-lg"
-            >
+            <div class="absolute -top-6 w-full bg-gray-800 text-white text-center text-sm font-bold py-1 rounded-t-lg">
               Most popular
             </div>
 
             <div
-              class="bg-white p-6 shadow-lg border border-gray-300 flex flex-col justify-between h-full w-full rounded-b-xl"
-            >
+              class="bg-white p-6 shadow-lg border border-gray-300 flex flex-col justify-between h-full w-full rounded-b-xl">
               <div>
                 <h2 class="text-xl font-bold text-gray-900">Base</h2>
                 <p class="text-sm text-gray-500 mt-2">Monthly Price</p>
-                <p class="mt-1 text-3xl font-semibold text-gray-900">
-                  40€ <span class="text-lg">/month</span>
-                </p>
+                <p class="mt-1 text-3xl font-semibold text-gray-900">40€ <span class="text-lg">/month</span></p>
                 <hr class="my-4 border-gray-300" />
 
                 <p class="text-sm text-gray-500">Product Count</p>
@@ -154,30 +120,23 @@
                 <hr class="my-2 border-gray-300" />
 
                 <p class="text-sm text-gray-500">Analytics</p>
-                <p class="text-gray-900 text-lg font-bold">
-                  Advanced analytics
-                </p>
+                <p class="text-gray-900 text-lg font-bold">Advanced analytics</p>
                 <hr class="my-2 border-gray-300" />
               </div>
 
               <button
                 data-plan="base"
-                class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-              >
+                class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
                 Start
               </button>
             </div>
           </div>
 
-          <div
-            class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full"
-          >
+          <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-300 flex flex-col justify-between h-full">
             <div>
               <h2 class="text-xl font-bold text-gray-900">Professional</h2>
               <p class="text-sm text-gray-500 mt-2">Monthly price</p>
-              <p class="mt-1 text-3xl font-semibold text-gray-900">
-                99€ <span class="text-lg">/month</span>
-              </p>
+              <p class="mt-1 text-3xl font-semibold text-gray-900">99€ <span class="text-lg">/month</span></p>
               <hr class="my-4 border-gray-300" />
 
               <p class="text-sm text-gray-500">Product count</p>
@@ -185,22 +144,17 @@
               <hr class="my-2 border-gray-300" />
 
               <p class="text-sm text-gray-500">Analytics</p>
-              <p class="text-gray-900 text-lg font-bold">
-                Professional analytics
-              </p>
+              <p class="text-gray-900 text-lg font-bold">Professional analytics</p>
               <hr class="my-2 border-gray-300" />
 
               <p class="text-sm text-gray-500">Service</p>
-              <p class="text-gray-900 text-lg font-bold">
-                Full time
-              </p>
+              <p class="text-gray-900 text-lg font-bold">Full time</p>
               <hr class="my-2 border-gray-300" />
             </div>
 
             <button
               data-plan="professional"
-              class="mt-6 w-full text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200"
-            >
+              class="mt-6 w-full text-center px-4 py-2 text-white font-semibold bg-gradient-to-tl from-purple-600 to-purple-800 rounded-lg shadow-md hover:shadow-xl hover:scale-98 transition-transform duration-200">
               Start
             </button>
           </div>
@@ -211,15 +165,15 @@
     <script src="js/main.js" defer type="module"></script>
     <script>
       function switchSection(sectionId) {
-        document.querySelectorAll(".section").forEach((section) => {
-          section.classList.remove("active");
-          section.style.display = "none";
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+          section.style.display = 'none';
         });
 
         const activeSection = document.getElementById(sectionId);
         if (activeSection) {
-          activeSection.classList.add("active");
-          activeSection.style.display = "block";
+          activeSection.classList.add('active');
+          activeSection.style.display = 'block';
         }
       }
     </script>

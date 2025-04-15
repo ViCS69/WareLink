@@ -1,12 +1,8 @@
-import { db } from "./firebaseConfig.js";
-import {
-  doc,
-  setDoc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { db } from './firebaseConfig.js';
+import { doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js';
 
 async function createUserStore(user) {
-  const userRef = doc(db, "users", user.uid);
+  const userRef = doc(db, 'users', user.uid);
   const userSnap = await getDoc(userRef);
 
   if (!userSnap.exists()) {
@@ -15,13 +11,13 @@ async function createUserStore(user) {
       name: user.displayName,
       email: user.email,
       createdAt: new Date(),
-      storeId: user.uid,
+      storeId: user.uid
     });
 
-    await setDoc(doc(db, "stores", user.uid), {
+    await setDoc(doc(db, 'stores', user.uid), {
       ownerId: user.uid,
       storeName: `${user.displayName}'s Store`,
-      createdAt: new Date(),
+      createdAt: new Date()
     });
   }
 }

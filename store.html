@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shop - WareLink</title>
     <link href="/src/styles.css" rel="stylesheet" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
       .bg-light-blue {
         background-color: lightblue;
@@ -21,80 +18,53 @@
 
     <header class="mx-auto">
       <div class="flex justify-around h-full">
-        <div
-          class="w-4/5 mx-auto h-full flex items-center justify-between bg-white shadow-md py-4 px-6"
-        >
+        <div class="w-4/5 mx-auto h-full flex items-center justify-between bg-white shadow-md py-4 px-6">
           <div class="flex items-center">
             <div
               id="storeLogoContainer"
               class="relative w-16 h-16 cursor-pointer bg-cover bg-center border-2 border-gray-300 rounded-lg flex items-center justify-center overflow-hidden"
               onclick="document.getElementById('logoUploader').click()"
               onmouseover="showUploadIcon()"
-              onmouseleave="hideUploadIcon()"
-            >
+              onmouseleave="hideUploadIcon()">
               <img id="storeLogo" class="absolute w-full h-full object-cover" />
 
               <div
                 id="uploadIcon"
-                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-bold opacity-0 transition-opacity duration-300"
-              >
+                class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-5xl font-bold opacity-0 transition-opacity duration-300">
                 <span>+</span>
               </div>
 
-              <input
-                type="file"
-                id="logoUploader"
-                accept="image/*"
-                class="hidden"
-              />
+              <input type="file" id="logoUploader" accept="image/*" class="hidden" />
             </div>
 
             <div class="ml-2 flex justify-center items-center">
-              <h1
-                id="storeName"
-                class="text-2xl font-semibold text-gray-800"
-              ></h1>
+              <h1 id="storeName" class="text-2xl font-semibold text-gray-800"></h1>
             </div>
           </div>
 
           <div class="flex items-center gap-2">
             <div id="store-actions">
-              <button
-                id="received-orders-btn"
-                class="text-center text-md py-2 mr-2 hover:text-blue-500"
-              >
-                 Received orders 
+              <button id="received-orders-btn" class="text-center text-md py-2 mr-2 hover:text-blue-500">
+                Received orders
               </button>
-              <button
-                id="order-history-btn"
-                class="text-center text-md py-2 hover:text-blue-500"
-              >
-                Order history 
-              </button>
+              <button id="order-history-btn" class="text-center text-md py-2 hover:text-blue-500">Order history</button>
             </div>
 
             <button
               id="addItemBtn"
-              class="add-item-btn bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600"
-            >
+              class="add-item-btn bg-green-500 text-white text-sm px-4 py-2 rounded hover:bg-green-600">
               + Add Item
             </button>
 
-            
-
             <div class="relative group">
-              <button class=" text-sm bg-gray-500 text-white px-4 py-2 rounded">
-                ☰
-              </button>
+              <button class="text-sm bg-gray-500 text-white px-4 py-2 rounded">☰</button>
               <div
                 id="category-menu"
-                class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
-              >
+                class="absolute right-0 mt-2 w-48 bg-gray-800 text-white rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                 <div id="categories-list"></div>
                 <button
                   id="add-category-btn"
-                  class="block w-full text-left px-4 py-2 bg-green-500 hover:bg-green-600 text-white"
-                >
+                  class="block w-full text-left px-4 py-2 bg-green-500 hover:bg-green-600 text-white">
                   + Add category
                 </button>
               </div>
@@ -107,35 +77,33 @@
     <main class="w-4/5 container mx-auto px-6">
       <article
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6"
-        id="itemsContainer"
-      ></article>
-      <button
-        id="stopMovingModeBtn"
-        class="hidden mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-      >
+        id="itemsContainer"></article>
+      <button id="stopMovingModeBtn" class="hidden mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
         Stop Moving Mode
       </button>
     </main>
 
-    <div id="editProductModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div
+      id="editProductModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
       <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-lg space-y-4 relative">
         <h2 class="text-xl font-bold mb-4">Edit product</h2>
-    
+
         <label class="block text-sm font-medium">Name</label>
         <input id="editName" type="text" class="w-full border px-3 py-2 rounded" />
-    
+
         <label class="block text-sm font-medium">Price (BGN)</label>
         <input id="editPrice" type="number" step="0.01" class="w-full border px-3 py-2 rounded" />
-    
+
         <label class="block text-sm font-medium">Add quantity</label>
         <input id="editQuantity" type="number" class="w-full border px-3 py-2 rounded" />
-    
+
         <label class="block text-sm font-medium">Category</label>
         <select id="editCategory" class="w-full border px-3 py-2 rounded"></select>
-    
-        <label class="block text-sm font-medium">ImageUrl</label>
-        <input id="editImageUrl" type="text" class="w-full border px-3 py-2 rounded" />
-    
+
+        <label class="block text-sm font-medium">Image</label>
+        <input id="editImageFile" type="file" accept="image/*" class="w-full border px-3 py-2 rounded" />
+
         <div class="flex justify-end gap-2 mt-4">
           <button id="cancelEdit" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">cancel</button>
           <button id="saveEdit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
@@ -143,31 +111,19 @@
       </div>
     </div>
 
-    <div
-      id="addCategoryModal"
-      class="fixed inset-0 flex items-center justify-center hidden"
-    >
+    <div id="addCategoryModal" class="fixed inset-0 flex items-center justify-center hidden">
       <div class="bg-white p-6 rounded shadow-lg w-80 relative">
-        <button
-          id="closeAddCategoryModal"
-          class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl"
-        >
+        <button id="closeAddCategoryModal" class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl">
           &times;
         </button>
         <h2 class="text-lg font-semibold mb-4">Add new category</h2>
 
         <form id="addCategoryForm" class="space-y-4">
-          <input
-            type="text"
-            id="categoryNameInput"
-            placeholder="Category name"
-            class="w-full border rounded p-2"
-          />
+          <input type="text" id="categoryNameInput" placeholder="Category name" class="w-full border rounded p-2" />
           <button
             type="submit"
             id="addCategoryBtn"
-            class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-          >
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600">
             Add
           </button>
         </form>
@@ -176,7 +132,9 @@
 
     <div id="uploadModal" class="fixed inset-0 flex items-center justify-center hidden">
       <div class="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
-        <button id="closeUploadModal" class="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-red-600">&times;</button>
+        <button id="closeUploadModal" class="absolute top-3 right-3 text-xl font-bold text-gray-600 hover:text-red-600">
+          &times;
+        </button>
         <h2 class="text-lg font-semibold mb-4">Upload Item</h2>
         <form id="productForm" class="space-y-4">
           <div>
@@ -184,7 +142,7 @@
             <input type="text" id="nameInput" class="w-full border rounded p-2" required />
             <small id="nameStatus" class="text-sm text-gray-500"></small>
           </div>
-    
+
           <div id="newProductFields" class="space-y-4 hidden">
             <div>
               <label for="priceInput" class="block font-medium">Selling Price</label>
@@ -203,63 +161,62 @@
               <input type="number" id="quantityInput" class="w-full border rounded p-2" />
             </div>
           </div>
-    
+
           <div>
             <label for="categorySelect" class="block font-medium">Category</label>
             <select id="categorySelect" class="w-full border rounded p-2" required>
               <option disabled selected>Loading categories...</option>
             </select>
           </div>
-    
+
           <div>
             <label for="productImage" class="block font-medium">Product Image</label>
             <input type="file" id="productImage" accept="image/*" class="w-full border rounded p-2" required />
           </div>
-    
-          <button id="submitBtn" type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600">
+
+          <button
+            id="submitBtn"
+            type="submit"
+            class="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600">
             Submit
           </button>
         </form>
       </div>
     </div>
-    
 
     <script type="module" src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/1.0.17/browser-image-compression.js"></script>
     <script type="module">
-      import { db } from "./js/firebaseConfig.js";
+      import { db } from './js/firebaseConfig.js';
       import {
         collection,
         query,
         where,
         getDocs,
         doc,
-        getDoc,
-      } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+        getDoc
+      } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js';
 
       async function ensureStoreIdInURL() {
-        const userId = localStorage.getItem("userUID");
+        const userId = localStorage.getItem('userUID');
         const urlParams = new URLSearchParams(window.location.search);
-        let storeId = urlParams.get("id");
+        let storeId = urlParams.get('id');
 
         if (!userId) {
-          console.warn("❌ No user ID found! Make sure the user is logged in.");
+          console.warn('❌ No user ID found! Make sure the user is logged in.');
           return;
         }
 
         if (!storeId) {
-          const storeQuery = query(
-            collection(db, "stores"),
-            where("ownerId", "==", userId)
-          );
+          const storeQuery = query(collection(db, 'stores'), where('ownerId', '==', userId));
           const storeSnapshot = await getDocs(storeQuery);
 
           if (!storeSnapshot.empty) {
             storeId = storeSnapshot.docs[0].id;
 
-            window.history.replaceState(null, "", `?id=${storeId}`);
+            window.history.replaceState(null, '', `?id=${storeId}`);
           } else {
-            console.warn("❌ No store found for this user!");
+            console.warn('❌ No store found for this user!');
             return;
           }
         }
@@ -268,30 +225,30 @@
       }
 
       async function checkStoreOwnership(storeId) {
-        const userId = localStorage.getItem("userUID");
+        const userId = localStorage.getItem('userUID');
         if (!userId || !storeId) return;
 
-        const storeRef = doc(db, "stores", storeId);
+        const storeRef = doc(db, 'stores', storeId);
         const storeSnap = await getDoc(storeRef);
 
         if (storeSnap.exists() && storeSnap.data().ownerId === userId) {
-          const ordersButton = document.getElementById("received-orders-btn");
-          const historyButton = document.getElementById("order-history-btn");
+          const ordersButton = document.getElementById('received-orders-btn');
+          const historyButton = document.getElementById('order-history-btn');
 
-          ordersButton.classList.remove("hidden");
-          historyButton.classList.remove("hidden");
+          ordersButton.classList.remove('hidden');
+          historyButton.classList.remove('hidden');
 
-          ordersButton.addEventListener("click", () => {
+          ordersButton.addEventListener('click', () => {
             window.location.href = `receivedOrders.html?storeId=${storeId}`;
           });
 
-          historyButton.addEventListener("click", () => {
+          historyButton.addEventListener('click', () => {
             window.location.href = `orderHistory.html?storeId=${storeId}`;
           });
         }
       }
 
-      document.addEventListener("DOMContentLoaded", ensureStoreIdInURL);
+      document.addEventListener('DOMContentLoaded', ensureStoreIdInURL);
     </script>
   </body>
 </html>

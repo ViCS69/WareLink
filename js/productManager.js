@@ -292,9 +292,13 @@ async function openEditModal(product) {
   editProductModal.classList.remove('hidden');
 }
 
-document.getElementById('cancelEdit').addEventListener('click', () => {
-  editProductModal.classList.add('hidden');
-});
+const isStorePage = document.getElementById('storePage') !== null;
+
+if (isStorePage) {
+  document.getElementById('cancelEdit')?.addEventListener('click', () => {
+    editProductModal.classList.add('hidden');
+  });
+
 
 document.getElementById('saveEdit').addEventListener('click', async () => {
   const fileInput = document.getElementById('editImageFile');
@@ -323,9 +327,11 @@ document.getElementById('saveEdit').addEventListener('click', async () => {
   await updateProductInDatabase(updatedProduct);
 
   editProductModal.classList.add('hidden');
+  
   location.reload();
-});
 
+});
+}
 function displayProduct(product) {
   const itemsContainer = document.getElementById('itemsContainer');
   const itemDiv = document.createElement('div');

@@ -5,12 +5,7 @@ import {
   collection,
   doc,
   getDoc,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  startAt,
-  endAt
+  getDocs
 } from 'https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js';
 import { loadUserSettings, saveUserSettings } from './settings.js';
 import { upgradeToPremium } from './subscriptions.js';
@@ -18,6 +13,7 @@ import { upgradeToPremium } from './subscriptions.js';
 let storeList, noResults;
 let userDoc = null;
 let storeDoc = null;
+let allStores = [];
 
 function updateStoreList(filteredStores) {
   storeList.innerHTML = '';
@@ -48,11 +44,9 @@ function updateSubscriptionUI() {
     button.className = originalClass;
     button.disabled = false;
 
-    // Remove hover/active/fancy styling for disabled state
     if (plan === currentPlan) {
       button.textContent = 'Current plan';
       button.disabled = true;
-
       button.classList.remove(
         'bg-blue-600',
         'hover:bg-blue-700',
@@ -63,7 +57,6 @@ function updateSubscriptionUI() {
         'hover:scale-98',
         'text-white'
       );
-
       button.classList.add('bg-gray-400', 'text-gray-200', 'cursor-not-allowed');
     } else {
       button.textContent = currentPlan ? 'Change plan' : 'Start';
@@ -73,19 +66,23 @@ function updateSubscriptionUI() {
 
 function checkUserSubscription() {
   const storeButton = document.getElementById('proceed-btn');
+
   if (userDoc?.subscription && storeDoc) {
     storeButton.classList.remove('pointer-events-none', 'opacity-50');
     storeButton.href = 'store.html';
+    storeButton.removeAttribute('title');
+  } else {
+    storeButton.classList.add('pointer-events-none', 'opacity-50');
+    storeButton.removeAttribute('href');
+    storeButton.title = 'Go to pricing to create a store';
   }
 }
 
-async function searchStoresByName(term) {
+async function loadStores() {
   try {
-    const storesRef = collection(db, 'stores');
-    const searchQuery = query(storesRef, orderBy('storeName'), startAt(term), endAt(term + '\uf8ff'));
+    const snapshot = await getDocs(collection(db, 'stores'));
 
-    const snapshot = await getDocs(searchQuery);
-    return snapshot.docs.map(doc => {
+    allStores = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
         storeId: doc.id,
@@ -93,9 +90,11 @@ async function searchStoresByName(term) {
         ownerId: data.ownerId ?? 'Unknown Owner'
       };
     });
+
+    allStores.sort((a, b) => a.storeName.localeCompare(b.storeName));
+    updateStoreList(allStores.slice(0, 7));
   } catch (err) {
-    console.error('❌ Error searching stores:', err);
-    return [];
+    console.error('❌ Error loading stores:', err);
   }
 }
 
@@ -132,15 +131,13 @@ export function openStoreNameModal() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   const userEmailElement = document.getElementById('user-email');
   const logoutLink = document.getElementById('logout-link');
   const settingsBtn = document.getElementById('settings-btn');
   storeList = document.getElementById('storeList');
   noResults = document.getElementById('noResults');
   const searchInput = document.getElementById('searchStore');
-
-  let searchTimeout;
 
   onAuthStateChanged(auth, async user => {
     if (!user) {
@@ -173,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
     button.addEventListener('click', async () => {
       const user = auth.currentUser;
       if (!user) {
-        alert('You have to login to edit your subscribtion.');
+        alert('You have to login to edit your subscription.');
         return;
       }
 
@@ -189,26 +186,18 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   searchInput.addEventListener('input', event => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(async () => {
-      const searchTerm = event.target.value.trim().toLowerCase();
-      if (searchTerm.length === 0) {
-        storeList.innerHTML = '';
-        noResults.style.display = 'none';
-        return;
-      }
-
-      const results = await searchStoresByName(searchTerm);
-      updateStoreList(results);
-    }, 300);
+    const searchTerm = event.target.value.trim().toLowerCase();
+    const results = allStores.filter(store =>
+      store.storeName.toLowerCase().includes(searchTerm)
+    );
+    updateStoreList(results);
   });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.subscription-btn').forEach(btn => {
     btn.setAttribute('data-original-class', btn.className);
   });
 
+  loadStores();
   updateSubscriptionUI();
 });
 

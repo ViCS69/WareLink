@@ -6,11 +6,11 @@ A lightweight app for creating and managing online stores with ease.
   -Create a profile and subscribe to start your own store
   
   -Easily add items with:  
-    -Name  
-    -Image  
-    -Sell price  
-    -Quantity  
-    -Buy price (used to calculate profits automatically)  
+    >Name  
+    >Image  
+    >Sell price  
+    >Quantity  
+    >Buy price (used to calculate profits automatically)  
 
 2. Customer:
    
@@ -26,9 +26,9 @@ A lightweight app for creating and managing online stores with ease.
   -Ordering
   
   -View your   
-     -placed orders  
-     -received orders  
-     -order history  
+     >placed orders  
+     >received orders  
+     >order history  
   -Calculating total sales
   
   -Calculating profit as long as you input buy price for every item you have

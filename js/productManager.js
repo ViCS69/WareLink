@@ -255,7 +255,7 @@ async function loadProducts(category = null, storeId = null) {
       return;
     }
     itemsContainer.innerHTML = '';
-    if (productSnapshot.empty) {
+    if (productSnapshot.empty) {  
       itemsContainer.innerHTML = `<p class="text-gray-500">No products found</p>`;
       return;
     }
@@ -274,7 +274,7 @@ const editName = document.getElementById('editName');
 const editPrice = document.getElementById('editPrice');
 const editQuantity = document.getElementById('editQuantity');
 const editCategory = document.getElementById('editCategory');
-const editImageUrl = document.getElementById('editImageFile');
+const editImageFile = document.getElementById('editImageFile');
 
 let currentProductBeingEdited = null;
 
@@ -284,7 +284,7 @@ async function openEditModal(product) {
   editName.value = product.name;
   editPrice.value = product.price;
   editQuantity.value = 0;
-  editImageFile.value = product.imageUrl || '';
+  
 
   await populateCategoryDropdown(document.getElementById('editCategory'));
   editCategory.value = product.category || '';
@@ -299,38 +299,36 @@ if (isStorePage) {
     editProductModal.classList.add('hidden');
   });
 
+  document.getElementById('saveEdit').addEventListener('click', async () => {
+    const fileInput = document.getElementById('editImageFile');
+    const newImageFile = fileInput.files[0];
+    const userUID = localStorage.getItem('userUID');
 
-document.getElementById('saveEdit').addEventListener('click', async () => {
-  const fileInput = document.getElementById('editImageFile');
-  const newImageFile = fileInput.files[0];
-  const userUID = localStorage.getItem('userUID');
+    if (!userUID) return alert('User not logged in.');
 
-  if (!userUID) return alert('User not logged in.');
+    const storeId = await getStoreId(userUID);
 
-  const storeId = await getStoreId(userUID);
+    let imageUrl = currentProductBeingEdited.imageUrl;
 
-  let imageUrl = currentProductBeingEdited.imageUrl;
+    if (newImageFile) {
+      imageUrl = await uploadProductImage(storeId, newImageFile);
+    }
 
-  if (newImageFile) {
-    imageUrl = await uploadProductImage(storeId, newImageFile);
-  }
+    const updatedProduct = {
+      ...currentProductBeingEdited,
+      name: editName.value.trim(),
+      price: parseFloat(editPrice.value),
+      imageUrl,
+      category: editCategory.value,
+      quantity: currentProductBeingEdited.quantity + parseInt(editQuantity.value || 0)
+    };
 
-  const updatedProduct = {
-    ...currentProductBeingEdited,
-    name: editName.value.trim(),
-    price: parseFloat(editPrice.value),
-    imageUrl,
-    category: editCategory.value,
-    quantity: currentProductBeingEdited.quantity + parseInt(editQuantity.value || 0)
-  };
+    await updateProductInDatabase(updatedProduct);
 
-  await updateProductInDatabase(updatedProduct);
+    editProductModal.classList.add('hidden');
 
-  editProductModal.classList.add('hidden');
-  
-  location.reload();
-
-});
+    location.reload();
+  });
 }
 function displayProduct(product) {
   const itemsContainer = document.getElementById('itemsContainer');

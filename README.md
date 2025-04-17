@@ -2,19 +2,21 @@ Shop Builder App
 A lightweight app for creating and managing online stores with ease.
 
 1. Store creator:
+   
   -Create a profile and subscribe to start your own store
+  
   -Easily add items with:
-    -Name
-    -Image
-    -Sell price
-    -Quantity
-    -Buy price (used to calculate profits automatically)
+    -Name  
+    -Image  
+    -Sell price  
+    -Quantity  
+    -Buy price (used to calculate profits automatically)  
 
-2. Customer:
+3. Customer:
   -Create a profile to browse existing stores
   -Use search tools to explore all public stores created by other users
 
-3. Features:
+4. Features:
   -Store discovery via search
   -Adding to cart
   -Ordering

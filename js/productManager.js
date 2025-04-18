@@ -28,11 +28,17 @@ async function addProduct(name, price) {
   const userUID = localStorage.getItem('userUID');
   const category = document.getElementById('categorySelect').value;
   const productImage = document.getElementById('productImage').files[0];
+  const quantityInput = document.getElementById('quantityInput').value;
 
   if (!userUID || !category || !productImage) {
     throw new Error('Моля, попълнете всички полета и изберете изображение.');
   }
 
+  const quantity = parseFloat(quantityInput);
+  if (isNaN(quantity) || quantity < 0) {
+    throw new Error('Моля, въведете валидно количество (положително число).');
+  }
+  
   try {
     const storeId = await getStoreId(userUID);
     const imageUrl = await uploadProductImage(storeId, productImage);
@@ -72,7 +78,7 @@ async function addProduct(name, price) {
       category,
       name: name.trim(),
       nameCleaned: cleanedName,
-      quantity: 0,
+      quantity: quantityInput,
       price: cleanPriceInput(price),
       imageUrl,
       unitType: unit?.unitType || null,
@@ -368,7 +374,7 @@ function displayProduct(product) {
 
   const text = document.createElement('p');
   text.classList.add('text-lg', 'font-semibold', 'mt-2', 'text-gray-800');
-  text.textContent = `${product.name} - ${product.price.toFixed(2)}€.`;
+  text.textContent = `${product.name} - ${product.price.toFixed(2)}€`;
 
   const isStorePage = document.getElementById('storePage') !== null;
   if (isStorePage) {

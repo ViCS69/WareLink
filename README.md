@@ -1,9 +1,9 @@
 # Shop builder app
--An app for creating and managing online stores with ease.
--https://www.youtube.com/watch?v=IzKtHuYMhMA video showing how it works
--https://warelink.netlify.app/ link to try it
--store acc with a bunch of added products: email: v2@abv.bg PW: viki02
--account to try ordering: email: v3@abv.bg PW: viki02
+  -An app for creating and managing online stores with ease.
+  -https://www.youtube.com/watch?v=IzKtHuYMhMA video showing how it works
+  -https://warelink.netlify.app/ link to try it
+  -store acc with a bunch of added products: email: v2@abv.bg PW: viki02
+  -account to try ordering: email: v3@abv.bg PW: viki02
 # Features
 - **Store creator:**
    

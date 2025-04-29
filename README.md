@@ -1,43 +1,44 @@
-Shop Builder App
-A lightweight app for creating and managing online stores with ease.
-
-1. Store creator:
+# Shop builder app
+-An app for creating and managing online stores with ease.
+-https://www.youtube.com/watch?v=IzKtHuYMhMA video showing how it works
+-https://warelink.netlify.app/ link to try it
+-store acc with a bunch of added products: email: v2@abv.bg PW: viki02
+-account to try ordering: email: v3@abv.bg PW: viki02
+# Features
+- **Store creator:**
    
-  >Create a profile and subscribe to start your own store
+  -Create a profile and subscribe to start your own store
   
-  >Easily add items with:  
-    >>Name  
-    >>Image  
-    >>Sell price  
-    >>Quantity  
-    >>Buy price (used to calculate profits automatically)  
+  -Easily add items with:  
+    -Name  
+    -Image  
+    -Sell price  
+    -Quantity  
+    -Buy price (used to calculate profits automatically)  
 
-2. Customer:
+- **Customer:**
    
-  >Create a profile to browse existing stores
+  -Create a profile to browse existing stores
   
-  >Use search tools to explore all public stores created by other users
+  -Use search tools to explore all public stores created by other users
 
-3. Features:  
-  >Store discovery via search
+- **Features:**  
+  -Store discovery via search
    
-  >Adding to cart
+  -Adding to cart
   
-  >Ordering
+  -Ordering
   
-  >View your   
-     >>placed orders  
-     >>received orders  
-     >>order history  
-  >Calculating total sales
-  
-  >Calculating profit as long as you input buy price for every item you have
-  
-  >Editing your details at any time
+  -View your:   
+     -placed orders  
+     -received orders  
+     -order history  
 
-5. TODO:  
-  >Advanced filter and sorting
-   
-  >Store personalization
+  -Calculating total sales
   
-  >More advanced analytics like which item is most sold or what generates the biggest profit
+  -Editing your details at any time
+
+- **TODO:**  
+  -Advanced filter and sorting
+   
+  -Store personalization
